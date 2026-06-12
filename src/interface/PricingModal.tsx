@@ -2,6 +2,7 @@ import { ExternalLink, X, Sparkles } from 'lucide-react';
 import React from 'react';
 import { GEMINI_PRICING } from '../core/llm/pricing';
 import { DEFAULT_MODELS } from '../core/llm/constants';
+import { SketchCard } from './sketch';
 
 interface PricingModalProps {
   onClose: () => void;
@@ -17,23 +18,30 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
     <div className="fixed inset-0 z-100 flex items-center justify-center p-6 pointer-events-auto overflow-hidden">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-white/60 backdrop-blur-xl"
+        className="absolute inset-0 animate-in fade-in duration-300"
+        style={{ background: 'color-mix(in srgb, var(--bg-base) 75%, transparent)' }}
       />
-      <div
-        className="relative w-full max-w-4xl bg-white rounded-[40px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] p-8 md:p-12 border border-zinc-100 max-h-[90vh] overflow-y-auto"
+      <SketchCard
+        variant="paper"
+        seed="pricing-modal"
+        className="relative w-full max-w-4xl p-8 md:p-12 max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-2 transition-opacity opacity-60 hover:opacity-100 active:scale-95 z-10"
+          style={{ color: 'var(--fg-base)' }}
         >
-          <X size={20} />
+          <X size={20} strokeWidth={2.5} />
         </button>
 
         <div className="mx-auto">
           {/* Header */}
           <div className="mb-10 text-center">
-            <h2 className="text-3xl font-black text-darkDelegation tracking-tight mb-2">
+            <h2
+              className="font-marker uppercase text-3xl leading-[0.95] mb-3"
+              style={{ color: 'var(--fg-base)' }}
+            >
               Gemini API Pricing
             </h2>
             <div className="flex flex-col items-center gap-3">
@@ -41,12 +49,16 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
                 href="https://ai.google.dev/gemini-api/docs/pricing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 rounded-full transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 py-1.5 border-[3px] transition-all duration-200"
+                style={{ borderColor: '#3b82f6', color: '#2563eb', borderRadius: 0 }}
               >
-                <span className="text-[11px] font-black uppercase tracking-wider text-blue-600">Official Pricing Page</span>
+                <span className="text-[11px] font-sketch uppercase tracking-[1.5px] text-blue-600">Official Pricing Page</span>
                 <ExternalLink size={11} className="text-blue-500" />
               </a>
-              <p className="text-zinc-500 text-xs font-medium leading-relaxed">
+              <p
+                className="font-hand text-sm leading-relaxed"
+                style={{ color: 'var(--fg-base)', opacity: 0.7 }}
+              >
                 Official Google Gemini API pricing (March 2026).
               </p>
             </div>
@@ -57,34 +69,44 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
             <div className="space-y-10">
               {/* Reasoning Models */}
               <div className="space-y-6">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 px-1 border-l-2 border-blue-500 pl-3">Reasoning Models</h3>
+                <h3
+                  className="text-[12px] font-sketch uppercase tracking-[1.5px] px-1 border-l-[3px] border-blue-500 pl-3"
+                  style={{ color: 'var(--fg-base)', opacity: 0.8 }}
+                >Reasoning Models</h3>
                 <div className="space-y-3">
                   {reasoningModels.map(([model, pricing]) => {
                     const isDefault = model === DEFAULT_MODELS.text;
                     return (
-                      <div key={model} className={`relative px-5 py-3.5 rounded-2xl border transition-all duration-300 flex items-center justify-between ${
-                        isDefault ? 'bg-blue-50/80 border-blue-100 shadow-sm' : 'bg-zinc-50 border-zinc-100/60'
-                      }`}>
+                      <div
+                        key={model}
+                        className="relative px-5 py-3.5 transition-all duration-300 flex items-center justify-between"
+                        style={{
+                          border: isDefault ? '3px solid #3b82f6' : '3px solid var(--stroke)',
+                          background: 'var(--bg-base)',
+                          borderRadius: 0,
+                          boxShadow: '4px 4px 0 0 ' + (isDefault ? '#3b82f6' : 'var(--stroke)'),
+                        }}
+                      >
                         {isDefault && (
-                          <div className="absolute -top-2 left-4 flex items-center gap-1.5 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black uppercase rounded-full tracking-widest shadow-sm">
+                          <div className="absolute -top-3 left-4 flex items-center gap-1.5 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-sketch uppercase tracking-[1.5px]" style={{ borderRadius: 0 }}>
                             <Sparkles size={8} className="fill-white" />
                             Default
                           </div>
                         )}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <p className="text-xs font-bold text-darkDelegation lowercase">
+                          <p className="text-xs font-mono font-bold lowercase" style={{ color: 'var(--fg-base)' }}>
                             {model}
                           </p>
                           {isDefault && <Sparkles size={10} className="text-blue-500" />}
                         </div>
                         <div className="flex items-center gap-5 text-xs font-mono font-bold">
                           <div className="flex items-center gap-2">
-                            <span className="text-zinc-400 font-medium uppercase text-[10px] tracking-tighter">In</span>
-                            <span className="text-darkDelegation">${pricing.inputPer1M?.toFixed(2)}</span>
+                            <span className="font-sketch uppercase text-[10px] tracking-[1px]" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>In</span>
+                            <span style={{ color: 'var(--fg-base)' }}>${pricing.inputPer1M?.toFixed(2)}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-zinc-400 font-medium uppercase text-[10px] tracking-tighter">Out</span>
-                            <span className="text-darkDelegation">${pricing.outputPer1M?.toFixed(2)}</span>
+                            <span className="font-sketch uppercase text-[10px] tracking-[1px]" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>Out</span>
+                            <span style={{ color: 'var(--fg-base)' }}>${pricing.outputPer1M?.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -105,31 +127,41 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
 
                 return (
                   <div key={type} className="space-y-6">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 px-1 border-l-2 border-amber-400 pl-3">
+                    <h4
+                      className="text-[12px] font-sketch uppercase tracking-[1.5px] px-1 border-l-[3px] border-amber-400 pl-3"
+                      style={{ color: 'var(--fg-base)', opacity: 0.8 }}
+                    >
                       {type} models
                     </h4>
                     <div className="space-y-3">
                       {typeModels.map(([model, pricing]) => {
                         const isDefault = model === DEFAULT_MODELS.image;
                         return (
-                          <div key={model} className={`relative px-5 py-3.5 rounded-2xl border transition-all duration-300 flex items-center justify-between ${
-                            isDefault ? 'bg-amber-50/80 border-amber-100 shadow-sm' : 'bg-zinc-50 border-zinc-100/60'
-                          }`}>
+                          <div
+                            key={model}
+                            className="relative px-5 py-3.5 transition-all duration-300 flex items-center justify-between"
+                            style={{
+                              border: isDefault ? '3px solid #f59e0b' : '3px solid var(--stroke)',
+                              background: 'var(--bg-base)',
+                              borderRadius: 0,
+                              boxShadow: '4px 4px 0 0 ' + (isDefault ? '#f59e0b' : 'var(--stroke)'),
+                            }}
+                          >
                             {isDefault && (
-                              <div className="absolute -top-2 left-4 flex items-center gap-1.5 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black uppercase rounded-full tracking-widest shadow-sm">
+                              <div className="absolute -top-3 left-4 flex items-center gap-1.5 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-sketch uppercase tracking-[1.5px]" style={{ borderRadius: 0 }}>
                                 <Sparkles size={8} className="fill-white" />
                                 Default
                               </div>
                             )}
                             <div className="flex items-center gap-3 min-w-0 flex-1">
-                              <p className="text-xs font-bold text-darkDelegation lowercase">
+                              <p className="text-xs font-mono font-bold lowercase" style={{ color: 'var(--fg-base)' }}>
                                 {model}
                               </p>
                               {isDefault && <Sparkles size={10} className="text-amber-500" />}
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-zinc-400 font-medium uppercase text-[10px] tracking-tight">Img</span>
-                              <span className="text-sm font-mono font-bold text-darkDelegation">
+                              <span className="font-sketch uppercase text-[10px] tracking-[1px]" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>Img</span>
+                              <span className="text-sm font-mono font-bold" style={{ color: 'var(--fg-base)' }}>
                                 ${pricing.perImage?.toFixed(3)}
                               </span>
                             </div>
@@ -155,13 +187,13 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
 
                 if (typeModels.length === 0) return null;
 
-                const colors = type === 'video' 
-                  ? { border: 'border-rose-500', bg: 'bg-rose-50/80', badge: 'bg-rose-600', borderLight: 'border-rose-100', icon: 'text-rose-500' }
-                  : { border: 'border-lime-400', bg: 'bg-lime-50/80', badge: 'bg-lime-500', borderLight: 'border-lime-100', icon: 'text-lime-600' };
+                const colors = type === 'video'
+                  ? { border: 'border-rose-500', accent: '#f43f5e', badge: 'bg-rose-600', icon: 'text-rose-500' }
+                  : { border: 'border-lime-400', accent: '#84cc16', badge: 'bg-lime-500', icon: 'text-lime-600' };
 
                 return (
                   <div key={type} className="space-y-6">
-                    <h4 className={`text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 px-1 border-l-2 ${colors.border} pl-3`}>
+                    <h4 className={`text-[12px] font-sketch uppercase tracking-[1.5px] px-1 border-l-[3px] ${colors.border} pl-3`} style={{ color: 'var(--fg-base)', opacity: 0.8 }}>
                       {type} models
                     </h4>
                     <div className="space-y-3">
@@ -170,26 +202,33 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
                         const label = pricing.perSong !== undefined ? (model === 'lyria-3-clip-preview' ? '30 Sec Song' : 'Song') : 'Sec';
 
                         return (
-                          <div key={model} className={`relative px-5 py-3.5 rounded-2xl border transition-all duration-300 flex items-center justify-between ${
-                            isDefault ? `${colors.bg} ${colors.borderLight} shadow-sm` : 'bg-zinc-50 border-zinc-100/60'
-                          }`}>
+                          <div
+                            key={model}
+                            className="relative px-5 py-3.5 transition-all duration-300 flex items-center justify-between"
+                            style={{
+                              border: isDefault ? `3px solid ${colors.accent}` : '3px solid var(--stroke)',
+                              background: 'var(--bg-base)',
+                              borderRadius: 0,
+                              boxShadow: '4px 4px 0 0 ' + (isDefault ? colors.accent : 'var(--stroke)'),
+                            }}
+                          >
                             {isDefault && (
-                              <div className={`absolute -top-2 left-4 flex items-center gap-1.5 px-2 py-0.5 ${colors.badge} text-white text-[8px] font-black uppercase rounded-full tracking-widest shadow-sm`}>
+                              <div className={`absolute -top-3 left-4 flex items-center gap-1.5 px-2 py-0.5 ${colors.badge} text-white text-[8px] font-sketch uppercase tracking-[1.5px]`} style={{ borderRadius: 0 }}>
                                 <Sparkles size={8} className="fill-white" />
                                 Default
                               </div>
                             )}
                             <div className="flex items-center gap-3 min-w-0 flex-1">
-                              <p className="text-xs font-bold text-darkDelegation lowercase">
+                              <p className="text-xs font-mono font-bold lowercase" style={{ color: 'var(--fg-base)' }}>
                                 {model}
                               </p>
                               {isDefault && <Sparkles size={10} className={colors.icon} />}
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-zinc-400 font-medium uppercase text-[10px] tracking-tight">
+                              <span className="font-sketch uppercase text-[10px] tracking-[1px]" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>
                                 {label}
                               </span>
-                              <span className="text-sm font-mono font-bold text-darkDelegation">
+                              <span className="text-sm font-mono font-bold" style={{ color: 'var(--fg-base)' }}>
                                 ${(pricing.perSong || pricing.perSecond || 0).toFixed(3)}
                               </span>
                             </div>
@@ -203,7 +242,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-      </div>
+      </SketchCard>
     </div>
   );
 };

@@ -12,8 +12,13 @@ export const TeamBadge: React.FC<TeamBadgeProps> = ({ system }) => {
   return (
     <div className="flex items-center gap-3">
       <div
-        className="h-9 px-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-black/5"
-        style={{ backgroundColor: system.color }}
+        className="h-9 px-3 flex items-center justify-center gap-2"
+        style={{
+          backgroundColor: system.color,
+          border: '3px solid var(--stroke)',
+          boxShadow: '4px 4px 0 0 var(--stroke)',
+          borderRadius: 0,
+        }}
       >
         <Users size={14} className="text-white opacity-90" strokeWidth={3} />
         <span className="text-xs font-black text-white leading-none">
@@ -21,10 +26,10 @@ export const TeamBadge: React.FC<TeamBadgeProps> = ({ system }) => {
         </span>
       </div>
       <div className="flex flex-col items-start">
-        <span className="text-sm font-black text-darkDelegation leading-tight">
+        <span className="font-marker uppercase leading-[0.95] text-sm" style={{ color: 'var(--fg-base)' }}>
           {system.teamName}
         </span>
-        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest leading-tight">
+        <span className="font-sketch uppercase tracking-[1.5px] text-[9px] leading-tight" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>
           {system.teamType}
         </span>
       </div>

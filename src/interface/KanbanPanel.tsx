@@ -34,7 +34,7 @@ function renderAgentTag(agentIndex: number) {
   const agent = getAllAgents(system).find(a => a.index === agentIndex)
   if (!agent) return null
   return (
-    <span key={agentIndex} className="flex items-center gap-1 text-[10px] text-zinc-500">
+    <span key={agentIndex} className="flex items-center gap-1 text-[10px] font-hand" style={{ color: 'var(--fg-base)', opacity: 0.7 }}>
       <span
         className="w-1.5 h-1.5 rounded-full shrink-0"
         style={{ backgroundColor: agent.color }}
@@ -60,12 +60,21 @@ function TaskCard({ task }: { task: Task; key?: string }) {
   };
 
   return (
-    <div key={task.id} className="bg-white rounded-lg border border-black/5 shadow-sm p-3 space-y-2 group relative">
+    <div
+      key={task.id}
+      className="p-3 space-y-2 group relative"
+      style={{
+        background: 'var(--bg-surface)',
+        border: '3px solid var(--stroke)',
+        boxShadow: '4px 4px 0 0 var(--stroke)',
+        borderRadius: 0,
+      }}
+    >
       <div
         className="flex items-start justify-between gap-1 cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-xs text-darkDelegation leading-snug font-bold flex-1">
+        <h3 className="text-xs leading-snug font-bold flex-1 font-hand" style={{ color: 'var(--fg-base)' }}>
           {task.title || 'Untitled Task'}
         </h3>
         <div className="flex items-center gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
@@ -77,7 +86,8 @@ function TaskCard({ task }: { task: Task; key?: string }) {
                   e.stopPropagation()
                   setIsDeleteModalOpen(true)
                 }}
-                className="p-1 text-zinc-300 hover:text-red-500 hover:bg-red-50 rounded transition-all"
+                className="p-1 hover:text-red-500 transition-all opacity-50 hover:opacity-100"
+                style={{ color: 'var(--fg-base)', borderRadius: 0 }}
                 title="Remove task"
               >
                 <Trash2 size={12} />
@@ -91,13 +101,22 @@ function TaskCard({ task }: { task: Task; key?: string }) {
             </>
           )}
         </div>
-        <button className="text-zinc-300 group-hover:text-zinc-500 transition-colors">
+        <button className="transition-opacity opacity-40 group-hover:opacity-70" style={{ color: 'var(--fg-base)' }}>
           {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </button>
       </div>
 
       {isExpanded && (
-        <p className="text-[11px] text-zinc-500 leading-relaxed bg-zinc-50/50 p-2 rounded border border-black/5 animate-in fade-in slide-in-from-top-1 duration-200">
+        <p
+          className="text-[11px] leading-relaxed p-2 font-hand animate-in fade-in slide-in-from-top-1 duration-200"
+          style={{
+            color: 'var(--fg-base)',
+            opacity: 0.85,
+            background: 'var(--bg-base)',
+            border: '3px solid var(--stroke)',
+            borderRadius: 0,
+          }}
+        >
           {task.description}
         </p>
       )}
@@ -110,11 +129,12 @@ function TaskCard({ task }: { task: Task; key?: string }) {
         <div className="flex items-center gap-2">
           {task.status === 'in_progress' && (
             <span
-              className="inline-block text-[10px] font-black uppercase tracking-widest rounded-full px-2 py-0.5 shadow-sm border whitespace-nowrap"
+              className="inline-block font-sketch uppercase tracking-[1px] text-[10px] px-2 py-0.5 whitespace-nowrap"
               style={{
                 color: USER_COLOR,
                 backgroundColor: USER_COLOR_LIGHT,
-                borderColor: USER_COLOR_SOFT
+                border: `3px solid ${USER_COLOR}`,
+                borderRadius: 0,
               }}
             >
               working
@@ -127,11 +147,12 @@ function TaskCard({ task }: { task: Task; key?: string }) {
                 e.stopPropagation();
                 setActiveAuditTaskId(task.id);
               }}
-              className="p-1 px-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all flex items-center gap-1.5 group/audit"
+              className="p-1 px-2 hover:text-emerald-500 transition-all flex items-center gap-1.5 group/audit opacity-60 hover:opacity-100"
+              style={{ color: 'var(--fg-base)', borderRadius: 0 }}
               title="View work details"
             >
               {task.revisions?.length > 0 && (
-                <span className="text-[10px] font-black text-zinc-300 group-hover/audit:text-emerald-400 transition-colors">
+                <span className="text-[10px] font-black group-hover/audit:text-emerald-400 transition-colors" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>
                   {task.revisions.length}
                 </span>
               )}
@@ -149,11 +170,11 @@ export function KanbanPanel({ height = 320 }: KanbanPanelProps) {
 
   return (
     <div
-      className="w-full bg-white border-t border-black/8 flex flex-col pointer-events-auto shrink-0 relative"
-      style={{ height }}
+      className="w-full border-t-[3px] flex flex-col pointer-events-auto shrink-0 relative"
+      style={{ height, background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}
     >
       {/* Columns Scroll Area */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-zinc-50/20">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden" style={{ background: 'var(--bg-surface)' }}>
         <div className="flex h-full min-w-max px-5 py-4 gap-4">
           {COLUMNS.map(({ status, label }) => {
             const colTasks = tasks.filter((t) => t.status === status)
@@ -161,22 +182,32 @@ export function KanbanPanel({ height = 320 }: KanbanPanelProps) {
               <div key={status} className="w-52 flex flex-col gap-3">
                 <div className="flex items-center justify-between shrink-0 select-none">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 leading-none">
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[10px] leading-none" style={{ color: 'var(--fg-base)', opacity: 0.65 }}>
                       {label}
                     </span>
-                    <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-400 text-[9px] font-bold rounded-md min-w-4.5 text-center">
+                    <span
+                      className="px-1.5 py-0.5 text-[9px] font-bold min-w-4.5 text-center"
+                      style={{
+                        background: 'var(--fg-base)',
+                        color: 'var(--bg-base)',
+                        borderRadius: 0,
+                      }}
+                    >
                       {colTasks.length}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-1">
+                <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-1 pb-1">
                   {colTasks.map((t) => (
                     <TaskCard key={t.id} task={t} />
                   ))}
                   {colTasks.length === 0 && (
-                    <div className="border border-dashed border-zinc-100 rounded-lg p-4 flex items-center justify-center select-none">
-                      <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Empty</span>
+                    <div
+                      className="p-4 flex items-center justify-center select-none"
+                      style={{ border: '3px dashed var(--stroke)', opacity: 0.4, borderRadius: 0 }}
+                    >
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--fg-base)' }}>Empty</span>
                     </div>
                   )}
                 </div>

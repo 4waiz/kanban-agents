@@ -46,18 +46,27 @@ export const DirectionalEdge = ({ id, source, target, sourceX, sourceY, targetX,
           >
             <div className="flex items-center gap-1.5 p-0.5">
               {isSuccess ? (
-                <div className="flex items-center justify-center w-6 h-6 rounded-full shadow-md border-2 border-white bg-[#10b981]">
+                <div
+                  className="flex items-center justify-center w-6 h-6 bg-[#10b981]"
+                  style={{ border: '3px solid var(--stroke)', boxShadow: '2px 2px 0 0 var(--stroke)', borderRadius: 0 }}
+                >
                   <Check size={12} strokeWidth={4} className="text-white" />
                 </div>
               ) : (
                 <div className="flex items-center gap-1">
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full shadow-md border-2 border-white bg-[#ef4444]">
+                  <div
+                    className="flex items-center justify-center w-6 h-6 bg-[#ef4444]"
+                    style={{ border: '3px solid var(--stroke)', boxShadow: '2px 2px 0 0 var(--stroke)', borderRadius: 0 }}
+                  >
                     <X size={12} strokeWidth={4} className="text-white" />
                   </div>
                   {retryCount && (
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full shadow-md border-2 border-white bg-white/95">
-                      <Repeat2 size={12} strokeWidth={3} className="text-zinc-500" />
-                      <span className="text-[11px] font-black text-darkDelegation leading-none">
+                    <div
+                      className="flex items-center gap-1.5 px-2 py-0.5 h-6"
+                      style={{ background: 'var(--bg-base)', border: '3px solid var(--stroke)', boxShadow: '2px 2px 0 0 var(--stroke)', borderRadius: 0 }}
+                    >
+                      <Repeat2 size={12} strokeWidth={3} style={{ color: 'var(--fg-base)', opacity: 0.6 }} />
+                      <span className="text-[11px] font-marker leading-none" style={{ color: 'var(--fg-base)' }}>
                         {retryCount}
                       </span>
                     </div>

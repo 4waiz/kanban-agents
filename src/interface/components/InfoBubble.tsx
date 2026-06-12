@@ -10,7 +10,7 @@ interface InfoBubbleProps {
 export const InfoBubble: React.FC<InfoBubbleProps> = ({ text }) => {
   return (
     <InfoTooltip text={text}>
-      <div className="text-zinc-300 hover:text-[var(--user-color)] transition-colors cursor-pointer outline-none ml-1" style={{ '--user-color': USER_COLOR } as React.CSSProperties}>
+      <div className="hover:text-[var(--user-color)] transition-colors cursor-pointer outline-none ml-1 opacity-50 hover:opacity-100" style={{ '--user-color': USER_COLOR, color: 'var(--fg-base)' } as React.CSSProperties}>
         <HelpCircle size={12} strokeWidth={2.5} />
       </div>
     </InfoTooltip>

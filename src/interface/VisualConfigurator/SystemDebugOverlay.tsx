@@ -21,33 +21,42 @@ export const SystemDebugOverlay: React.FC<SystemDebugOverlayProps> = ({ system, 
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-2 py-1 bg-red-50 text-red-500 rounded border border-red-100 text-[8px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center gap-1.5"
+        className="px-2 py-1 text-red-500 font-sketch uppercase tracking-[1.5px] text-[12px] hover:opacity-80 transition-opacity flex items-center gap-1.5"
+        style={{ border: '3px solid #ef4444', boxShadow: '3px 3px 0 0 #ef4444', borderRadius: 0 }}
       >
         <Code size={10} />
         Debug System
       </button>
 
       {isOpen && (
-        <div className="fixed inset-4 bg-white border border-zinc-200 shadow-2xl rounded-2xl z-[1000] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-          <div className="p-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
+        <div
+          className="fixed inset-4 z-[1000] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          style={{ background: '#1A1521', color: '#7CE630', border: '3px solid var(--stroke)', boxShadow: '8px 8px 0 0 var(--stroke)', borderRadius: 0 }}
+        >
+          <div
+            className="p-4 flex items-center justify-between border-b-[3px]"
+            style={{ borderColor: '#7CE63040' }}
+          >
             <div className="flex items-center gap-3">
-              <Code size={14} className="text-zinc-400" />
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                System Debug Data — <span className="text-darkDelegation">{system.teamName || 'Untitled'}</span>
+              <Code size={14} style={{ color: '#7CE630' }} />
+              <h3 className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: '#7CE630', opacity: 0.7 }}>
+                System Debug Data — <span style={{ color: '#7CE630', opacity: 1 }}>{system.teamName || 'Untitled'}</span>
               </h3>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 px-2 py-1 bg-white border border-zinc-200 rounded-lg text-[9px] font-bold text-zinc-600 hover:bg-zinc-50 transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-2 py-1 font-sketch uppercase tracking-[1.5px] text-[12px] hover:opacity-80 transition-opacity active:scale-95"
+                style={{ color: '#7CE630', border: '3px solid #7CE63060', borderRadius: 0 }}
               >
-                {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                {copied ? <Check size={12} style={{ color: '#7CE630' }} /> : <Copy size={12} />}
                 {copied ? 'Copied!' : 'Copy JSON'}
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 px-2 hover:bg-zinc-200 rounded-lg text-zinc-400 hover:text-darkDelegation transition-colors"
+                className="p-1 px-2 hover:opacity-80 transition-opacity"
+                style={{ color: '#7CE630' }}
                 title="Close overlay"
               >
                 <X size={16} />
@@ -55,12 +64,12 @@ export const SystemDebugOverlay: React.FC<SystemDebugOverlayProps> = ({ system, 
             </div>
           </div>
 
-          <pre className="flex-1 overflow-auto p-6 text-[11px] font-mono whitespace-pre-wrap bg-darkDelegation text-green-400 selection:bg-green-500/20">
+          <pre className="flex-1 overflow-auto p-6 text-[11px] font-mono whitespace-pre-wrap selection:bg-green-500/20" style={{ background: '#1A1521', color: '#7CE630' }}>
             {JSON.stringify(system, null, 2)}
           </pre>
 
-          <div className="p-3 bg-zinc-50 border-t border-zinc-100 flex justify-end">
-            <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 italic">
+          <div className="p-3 flex justify-end border-t-[3px]" style={{ borderColor: '#7CE63040' }}>
+            <p className="font-sketch uppercase tracking-[1.5px] text-[12px] italic" style={{ color: '#7CE630', opacity: 0.6 }}>
               Provisional Debug Tool • Close with ESC or button
             </p>
           </div>

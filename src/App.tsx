@@ -73,7 +73,10 @@ const App: React.FC = () => {
 
   return (
     <SceneContext.Provider value={sceneManager}>
-      <div className="w-screen h-screen bg-white overflow-hidden flex flex-col">
+      <div
+        className="w-screen h-screen overflow-hidden flex flex-col font-hand"
+        style={{ background: 'var(--bg-base)', color: 'var(--fg-base)' }}
+      >
         {/* Top: Header */}
         {!isFullscreen && <Header />}
 
@@ -82,7 +85,10 @@ const App: React.FC = () => {
           {isLogOpen && !isFullscreen && viewMode !== 'design' && <ActionLogPanel />}
 
           {/* Center: canvas + kanban drawer stacked */}
-          <div className="relative flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden bg-zinc-50">
+          <div
+            className="relative flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden"
+            style={{ background: 'var(--bg-surface)' }}
+          >
 
             {/* Simulation Context - Persistently Mounted */}
             <div
@@ -94,10 +100,11 @@ const App: React.FC = () => {
               {/* Resize Bar */}
               {isKanbanOpen && !isFullscreen && (
                 <div
-                  className={`h-2 hover:h-2 bg-transparent hover:bg-zinc-200 border-t border-black/5 transition-colors cursor-row-resize z-30 flex items-center justify-center group shrink-0 ${useCoreStore.getState().isResizing ? 'bg-zinc-300' : ''}`}
+                  className="h-2 bg-transparent transition-colors cursor-row-resize z-30 flex items-center justify-center group shrink-0 border-t-[3px]"
+                  style={{ borderColor: 'var(--stroke)' }}
                   onMouseDown={startResizing}
                 >
-                  <div className="w-12 h-1 bg-zinc-300 rounded-full group-hover:bg-zinc-400" />
+                  <div className="w-12 h-1.5" style={{ background: 'var(--stroke)' }} />
                 </div>
               )}
 
@@ -112,10 +119,16 @@ const App: React.FC = () => {
         {/* Design Mode Overlay (Modal) */}
         {viewMode === 'design' && (
           <div
-            className="fixed inset-0 z-[60] flex items-center justify-center p-3 md:p-6 bg-white/40 backdrop-blur-xl"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-3 md:p-6"
+            style={{ background: 'color-mix(in srgb, var(--bg-base) 70%, transparent)' }}
           >
             <div
-              className="w-full h-full bg-white rounded-2xl shadow-2xl border border-zinc-200/50 overflow-hidden flex flex-col"
+              className="w-full h-full overflow-hidden flex flex-col"
+              style={{
+                background: 'var(--bg-base)',
+                border: '3px solid var(--stroke)',
+                boxShadow: '10px 10px 0 0 var(--stroke)',
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               <VisualConfigurator />

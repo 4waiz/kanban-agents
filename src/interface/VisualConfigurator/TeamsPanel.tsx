@@ -4,6 +4,7 @@ import { AGENTIC_SETS, AgenticSystem } from '../../data/agents';
 import { DEFAULT_MODELS } from '../../core/llm/constants';
 import { useTeamStore } from '../../integration/store/teamStore';
 import { TeamCard } from './TeamCard';
+import { SketchButton } from '../sketch';
 
 interface TeamsPanelProps {
   onSelectTeam: (id: string) => void;
@@ -54,7 +55,7 @@ export const TeamsPanel: React.FC<TeamsPanelProps> = ({ onSelectTeam, selectedTe
   };
 
   return (
-    <div className="w-96 border-l border-zinc-100 bg-white flex flex-col h-full shrink-0">
+    <div className="w-96 border-l-[3px] flex flex-col h-full shrink-0" style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}>
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {allSystems.map((system) => {
           const isSelected = selectedTeamId === system.id;
@@ -75,14 +76,17 @@ export const TeamsPanel: React.FC<TeamsPanelProps> = ({ onSelectTeam, selectedTe
           );
         })}
       </div>
-      <div className="p-4 border-t border-zinc-50 bg-white">
-        <button
+      <div className="p-4 border-t-[3px]" style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}>
+        <SketchButton
+          variant="filled"
+          size="md"
           onClick={handleCreateNew}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-darkDelegation hover:bg-darkDelegation text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] transition-all shadow-lg shadow-black/5 active:scale-[0.98]"
+          seed="create-new-team"
+          className="w-full"
         >
           <Plus size={14} strokeWidth={3} />
           Create New Team
-        </button>
+        </SketchButton>
       </div>
     </div>
   );

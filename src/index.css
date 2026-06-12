@@ -1,11 +1,70 @@
-/* Import Inter from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+/* ------------------------------------------------------------------ *
+ * Sketch-Brutalist design system — fonts, tokens, signature utilities  *
+ * ------------------------------------------------------------------ */
+
+/* Hand faces (display/body/labels) + legacy serious trio */
+@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Architects+Daughter&family=Shadows+Into+Light+Two&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;700&display=swap');
 @import 'tailwindcss';
 
-:root {
-  color-scheme: light;
+/* ------------------------------------------------------------------ */
+/* 1. Tokens (Tailwind v4 @theme → generates color/font utilities)      */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Fonts */
+  --font-marker: 'Caveat Brush', cursive;
+  --font-hand: 'Architects Daughter', cursive;
+  --font-sketch: 'Shadows Into Light Two', cursive;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Core sketch palette. --color-ink is true near-black ink (light mode). */
+  --color-ink: #0a0a0a;
+  --color-paper: #f5f1e8;
+  --color-paper-shadow: #e8e2d0;
+  --color-highlight-yellow: #ffe34d;
+  --color-highlight-mint: #c8f0d8;
+
+  /* Dark ("night") palette */
+  --color-paper-night: #0e0b14;
+  --color-paper-night-shadow: #1a1521;
+  --color-ink-night: #f5f1e8;
+
+  /* Six neon accents */
+  --color-accent-electric: #00e0ff;
+  --color-accent-pink: #ff4d9e;
+  --color-accent-acid: #b8ff3d;
+  --color-accent-sun: #ffe34d;
+  --color-accent-orange: #ff7a1a;
+  --color-accent-violet: #7b5bff;
+
+  /* Custom max width cap used by section containers (87.5rem / 1400px) */
+  --spacing-350: 87.5rem;
 }
 
+/* ------------------------------------------------------------------ */
+/* 2. Semantic theme vars (what components actually read)               */
+/* ------------------------------------------------------------------ */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --bg-base: var(--color-paper);
+  --bg-surface: var(--color-paper-shadow);
+  --fg-base: var(--color-ink);
+  --stroke: var(--color-ink);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg-base: var(--color-paper-night);
+  --bg-surface: var(--color-paper-night-shadow);
+  --fg-base: var(--color-ink-night);
+  --stroke: var(--color-ink-night);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Base                                                              */
+/* ------------------------------------------------------------------ */
 html,
 body,
 #root {
@@ -15,21 +74,106 @@ body,
   user-select: text;
 }
 
+body {
+  background-color: var(--bg-base);
+  color: var(--fg-base);
+  font-family: var(--font-hand);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 button,
 a {
   cursor: pointer;
 }
 
-/* Tailwind config: font-sans usa Inter */
+/* Tailwind config helper retained */
 .font-sans {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
 }
 
-@theme {
-  --color-darkDelegation: #313437;
+/* Accessible skip-to-content link, styled in the sketch face */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 200;
+  padding: 0.6rem 1rem;
+  background: var(--fg-base);
+  color: var(--bg-base);
+  font-family: var(--font-sketch);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 12px;
+  border: 3px solid var(--stroke);
+}
+.skip-link:focus {
+  top: 1rem;
 }
 
-/* Base styles for Markdown content */
+/* ------------------------------------------------------------------ */
+/* 4. Signature utilities                                               */
+/* ------------------------------------------------------------------ */
+
+/* Plain (non-roughjs) hard-edged frame */
+.sketch-border {
+  border: 3px solid var(--stroke);
+  border-radius: 0;
+  box-shadow: 6px 6px 0 0 var(--stroke);
+}
+
+.sketch-rotate-a {
+  transform: rotate(-0.3deg);
+}
+.sketch-rotate-b {
+  transform: rotate(0.4deg);
+}
+
+/* Diagonal 45° ink hatching, for filled fills/overlays */
+.hatched {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--stroke) 0,
+    var(--stroke) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+}
+
+/* Seamless marquee scroll (pauses on hover via .marquee-group:hover) */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 24s) linear infinite;
+}
+.marquee-group:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Fixed full-viewport paper-noise grain (multiply on light, screen on dark) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+[data-theme='dark'] body::before {
+  mix-blend-mode: screen;
+  opacity: 0.06;
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Markdown content (retained, themed)                               */
+/* ------------------------------------------------------------------ */
 .markdown-content p {
   @apply mb-3 last:mb-0;
 }
@@ -47,9 +191,22 @@ a {
   @apply mb-1;
 }
 .markdown-content strong {
-  @apply font-bold text-zinc-700/90;
+  @apply font-bold;
 }
 .markdown-content em {
   @apply italic;
 }
 
+/* ------------------------------------------------------------------ */
+/* 6. Reduced-motion net                                                */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

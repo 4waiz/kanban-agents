@@ -32,15 +32,21 @@ const SimulationView: React.FC<SimulationViewProps> = ({ canvasRef, isFullscreen
   return (
     <div className="flex flex-col flex-1 min-w-0 min-h-0 relative">
       {/* Simulation View Header */}
-      <div className="h-14 border-b border-black/5 flex items-center justify-between px-5 bg-white shrink-0">
+      <div
+        className="h-14 border-b-[3px] flex items-center justify-between px-5 shrink-0"
+        style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}
+      >
         <div className="flex-1 flex items-center gap-4">
           <button
             onClick={() => setIsFlowModalOpen(true)}
-            className="flex items-center gap-4 hover:bg-zinc-50 px-2.5 py-1.5 rounded-2xl transition-all active:scale-95 group cursor-pointer"
+            className="flex items-center gap-4 px-2.5 py-1.5 transition-all active:scale-95 group cursor-pointer hover:opacity-80"
             title="View Team Flow"
           >
             <TeamBadge system={activeSet} />
-            <div className="w-8 h-8 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:text-darkDelegation group-hover:border-zinc-200 transition-colors">
+            <div
+              className="w-8 h-8 flex items-center justify-center transition-colors"
+              style={{ border: '3px solid var(--stroke)', color: 'var(--fg-base)', borderRadius: 0 }}
+            >
               <Eye size={14} />
             </div>
           </button>
@@ -51,7 +57,8 @@ const SimulationView: React.FC<SimulationViewProps> = ({ canvasRef, isFullscreen
         <div className="flex items-center justify-end gap-1">
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-2 text-zinc-400 hover:text-darkDelegation transition-colors cursor-pointer"
+            className="p-2 transition-opacity hover:opacity-100 opacity-60 cursor-pointer"
+            style={{ color: 'var(--fg-base)' }}
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Panel"}
           >
             {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
@@ -59,7 +66,7 @@ const SimulationView: React.FC<SimulationViewProps> = ({ canvasRef, isFullscreen
         </div>
       </div>
 
-      <div ref={canvasRef} className="flex-1 min-h-0 relative overflow-hidden bg-black/5">
+      <div ref={canvasRef} className="flex-1 min-h-0 relative overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
         <UIOverlay />
         {isFullscreen && selectedNpcIndex !== null && (
           <div className="absolute top-4 right-4 bottom-4 w-96 z-50 pointer-events-none flex flex-col gap-4">

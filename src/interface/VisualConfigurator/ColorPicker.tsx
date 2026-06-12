@@ -49,10 +49,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       <div className="relative group/picker">
         <div
           onClick={() => !disabled && colorInputRef.current?.click()}
-          className={`w-8 h-8 rounded-xl shadow-sm flex items-center justify-center transition-all ${
-            !disabled ? 'cursor-pointer hover:scale-110 active:scale-90 shadow-black/5' : 'opacity-50'
+          className={`w-8 h-8 flex items-center justify-center transition-all ${
+            !disabled ? 'cursor-pointer hover:scale-110 active:scale-90' : 'opacity-50'
           }`}
-          style={{ backgroundColor: color || '#A855F7' }}
+          style={{ backgroundColor: color || '#A855F7', border: '3px solid var(--stroke)', boxShadow: '3px 3px 0 0 var(--stroke)', borderRadius: 0 }}
         >
           {!disabled && (
             <Pipette size={14} className="text-white opacity-90" strokeWidth={2.5} />
@@ -73,7 +73,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       {(errorMsg || suggestedColor) && (
         <div className="flex flex-col gap-1.5 min-w-[140px]">
           {errorMsg && (
-            <p className="text-[8px] font-black leading-tight text-red-500 uppercase tracking-tight">
+            <p className="font-sketch uppercase tracking-[1.5px] text-[12px] leading-tight text-red-500">
               {errorMsg}
             </p>
           )}
@@ -86,7 +86,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                   setSuggestedColor(null);
                   setErrorMsg(null);
                 }}
-                className="flex-1 py-1 px-2 bg-white border border-zinc-200 text-zinc-400 rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-zinc-50 transition-colors"
+                className="flex-1 py-1 px-2 font-sketch uppercase tracking-[1.5px] text-[12px] hover:opacity-80 transition-opacity"
+                style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                 type="button"
               >
                 No
@@ -98,8 +99,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                   setSuggestedColor(null);
                   setErrorMsg(null);
                 }}
-                className="flex-[2] py-1 px-2 text-white rounded-lg text-[8px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-black/5"
-                style={{ backgroundColor: suggestedColor }}
+                className="flex-[2] py-1 px-2 text-white font-sketch uppercase tracking-[1.5px] text-[12px] hover:opacity-90 transition-all"
+                style={{ backgroundColor: suggestedColor, border: '3px solid var(--stroke)', boxShadow: '3px 3px 0 0 var(--stroke)', borderRadius: 0 }}
                 type="button"
               >
                 Use suggested

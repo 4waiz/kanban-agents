@@ -9,10 +9,12 @@ const NodeHandle = ({ h, i, total, position }: { h: HandleData, i: number, total
     type={h.role}
     position={position === 'top' ? Position.Top : Position.Bottom}
     id={h.id}
-    className="!w-2.5 !h-2.5 !border-white shadow-sm hover:scale-125 transition-transform"
+    className="!w-2.5 !h-2.5 hover:scale-125 transition-transform"
     style={{
       left: `calc(50% + ${(i - (total - 1) / 2) * 28}px)`,
       backgroundColor: h.color,
+      border: '2px solid var(--stroke)',
+      borderRadius: 0,
       [position]: 0,
       transform: `translate(-50%, ${position === 'top' ? '-50%' : '50%'})`,
     }}
@@ -24,17 +26,21 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
   const topHandles: HandleData[] = data.topHandles || [];
   const bottomHandles: HandleData[] = data.bottomHandles || [];
 
+  const accentColor = isUser ? USER_COLOR : (data.color || '#ccc');
+
   return (
     <div
       className={`
-        relative px-3 py-2.5 shadow-sm rounded-2xl border-2 pointer-events-auto transition-all duration-300 w-fit min-w-[280px] bg-white
-        ${selected ? 'ring-4 scale-105 z-20 shadow-lg' : 'z-10'}
+        relative px-3 py-2.5 pointer-events-auto transition-all duration-300 w-fit min-w-[280px]
+        ${selected ? 'scale-105 z-20' : 'z-10'}
         ${data.isDimmed ? 'opacity-20 translate-y-1' : 'opacity-100'}
 
       `}
       style={{
-        borderColor: selected ? (isUser ? USER_COLOR : data.color) : (isUser ? USER_COLOR : data.color || '#ccc'),
-        boxShadow: selected ? `0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05), 0 0 0 4px ${isUser ? USER_COLOR : data.color}30` : undefined
+        background: 'var(--bg-base)',
+        borderRadius: 0,
+        border: `3px solid ${accentColor}`,
+        boxShadow: selected ? `6px 6px 0 0 ${accentColor}` : `4px 4px 0 0 ${accentColor}`,
       }}
     >
       {/* Handles */}
@@ -42,7 +48,10 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
       {bottomHandles.map((h, i) => <NodeHandle key={h.id} h={h} i={i} total={bottomHandles.length} position="bottom" />)}
 
       <div className="flex items-center gap-3">
-        <div className="shrink-0 p-0.5 rounded-xl bg-zinc-50 border border-zinc-100/50">
+        <div
+          className="shrink-0 p-0.5"
+          style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}
+        >
           <Avatar
             type={isUser ? "user" : (data.isLead ? "lead" : "sub")}
             color={isUser ? USER_COLOR : data.color}
@@ -52,8 +61,8 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
 
         <div className="flex flex-col min-w-0 flex-1 gap-1">
           <div
-            className="font-black text-[13px] tracking-tight truncate min-w-0"
-            style={{ color: isUser ? USER_COLOR : undefined }}
+            className="font-marker uppercase text-[14px] leading-[0.95] truncate min-w-0"
+            style={{ color: isUser ? USER_COLOR : 'var(--fg-base)' }}
           >
             {data.label}
           </div>
@@ -62,11 +71,12 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
             <div className="flex flex-wrap gap-1.5 items-center">
               {data.isLead && !isUser && (
                 <div
-                  className="text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter border shadow-sm leading-none flex items-center h-4 shrink-0 w-fit"
+                  className="text-[9px] font-sketch px-1.5 py-0.5 uppercase tracking-[1.5px] leading-none flex items-center h-4 shrink-0 w-fit"
                   style={{
                     backgroundColor: `${data.color}20`,
                     color: data.color,
-                    borderColor: `${data.color}40`
+                    border: `2px solid ${data.color}`,
+                    borderRadius: 0
                   }}
                 >
                   Lead Agent
@@ -75,11 +85,12 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
 
               {!data.isLead && !isUser && (
                 <div
-                  className="text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter border shadow-sm leading-none flex items-center h-4 shrink-0 w-fit"
+                  className="text-[9px] font-sketch px-1.5 py-0.5 uppercase tracking-[1.5px] leading-none flex items-center h-4 shrink-0 w-fit"
                   style={{
                     backgroundColor: `${data.color}20`,
                     color: data.color,
-                    borderColor: `${data.color}40`
+                    border: `2px solid ${data.color}`,
+                    borderRadius: 0
                   }}
                 >
                   Subagent
@@ -88,11 +99,12 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
 
               {data.agent?.humanInTheLoop && (
                 <div
-                  className="text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter border leading-none flex items-center h-4 shrink-0 w-fit gap-1"
+                  className="text-[9px] font-sketch px-1.5 py-0.5 uppercase tracking-[1.5px] leading-none flex items-center h-4 shrink-0 w-fit gap-1"
                   style={{
                     backgroundColor: USER_COLOR_LIGHT,
                     color: USER_COLOR,
-                    borderColor: USER_COLOR_SOFT
+                    border: `2px solid ${USER_COLOR}`,
+                    borderRadius: 0
                   }}
                 >
                   <User size={8} strokeWidth={3} />
@@ -103,11 +115,13 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
 
             {!isUser && (
               <div
-                className="text-[9px] font-mono px-1.5 py-0.5 rounded border inline-block italic w-fit"
+                className="text-[9px] font-mono px-1.5 py-0.5 inline-block w-fit"
                 style={{
-                  color: '#a1a1aa', // text-zinc-400
-                  borderColor: '#f4f4f5', // border-zinc-100
-                  backgroundColor: '#fafafa' // bg-zinc-50
+                  color: 'var(--fg-base)',
+                  opacity: 0.7,
+                  border: '2px solid var(--stroke)',
+                  background: 'var(--bg-surface)',
+                  borderRadius: 0
                 }}
               >
                 {data.agent?.model}

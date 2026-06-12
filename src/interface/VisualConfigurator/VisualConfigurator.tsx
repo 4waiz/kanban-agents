@@ -15,6 +15,7 @@ import { VisualFlowNode } from './nodes/VisualFlowNode';
 import { DirectionalEdge } from './edges/DirectionalEdge';
 import { useFlowFocus } from './hooks/useFlowFocus';
 import { SystemDebugOverlay } from './SystemDebugOverlay';
+import { SketchButton } from '../sketch';
 
 const nodeTypes: NodeTypes = {
   agent: VisualFlowNode,
@@ -30,10 +31,13 @@ const edgeTypes = {
 // --- Internal Sub-components ---
 
 const InternalHeader = ({ onClose, system }: { onClose: () => void, system: any }) => (
-  <div className="h-14 border-b border-zinc-100 bg-white flex items-center justify-between px-6 z-50 shrink-0">
+  <div
+    className="h-14 flex items-center justify-between px-6 z-50 shrink-0 border-b-[3px]"
+    style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}
+  >
     <div className="flex items-center gap-2">
-      <Settings size={18} className="text-darkDelegation" strokeWidth={2} />
-      <h2 className="text-xs font-black text-darkDelegation uppercase tracking-[0.2em] ml-2">Manage Teams</h2>
+      <Settings size={18} style={{ color: 'var(--fg-base)' }} strokeWidth={2.5} />
+      <h2 className="font-marker uppercase text-xl leading-[0.95] ml-2" style={{ color: 'var(--fg-base)' }}>Manage Teams</h2>
 
       <div className="ml-4">
         <SystemDebugOverlay system={system} />
@@ -43,19 +47,20 @@ const InternalHeader = ({ onClose, system }: { onClose: () => void, system: any 
     <div className="flex items-center gap-3">
       <button
         onClick={onClose}
-        className="p-2 hover:bg-zinc-100 rounded-xl transition-colors group border border-transparent hover:border-zinc-200"
+        className="p-2 transition-opacity opacity-60 hover:opacity-100"
+        style={{ color: 'var(--fg-base)' }}
       >
-        <X className="w-5 h-5 text-zinc-400 group-hover:text-darkDelegation" />
+        <X className="w-5 h-5" strokeWidth={2.5} />
       </button>
     </div>
   </div>
 );
 
 const AgentPlaceholder = () => (
-  <div className="w-80 flex flex-col items-center justify-center p-8 text-center text-zinc-400">
-    <User size={32} strokeWidth={1.5} className="mb-4 opacity-20" />
-    <p className="text-[10px] uppercase font-bold tracking-widest">Select an agent</p>
-    <p className="text-[9px] mt-2 leading-relaxed italic opacity-60">Click on any node in the flow to view and edit its details.</p>
+  <div className="w-80 flex flex-col items-center justify-center p-8 text-center" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>
+    <User size={32} strokeWidth={2} className="mb-4 opacity-40" />
+    <p className="font-sketch uppercase tracking-[1.5px] text-[12px]">Select an agent</p>
+    <p className="font-hand text-sm mt-2 leading-relaxed opacity-80">Click on any node in the flow to view and edit its details.</p>
   </div>
 );
 
@@ -253,12 +258,12 @@ const VisualConfiguratorContent: React.FC = () => {
   }, [system, removeAgentFromTree]);
 
   return (
-    <div className="w-full h-full relative bg-zinc-50 flex flex-col overflow-hidden">
+    <div className="w-full h-full relative flex flex-col overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
       <InternalHeader onClose={() => handleClose(false)} system={system} />
 
       <div className="flex-1 min-h-0 relative flex overflow-hidden">
         {/* Left Panel: Agent Config */}
-        <div className="relative shrink-0 flex border-r border-zinc-100 bg-white">
+        <div className="relative shrink-0 flex border-r-[3px]" style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}>
           {activeAgent && activeAgent.id !== 'user' ? (
             <AgentConfigPanel
               agent={activeAgent}
@@ -295,21 +300,20 @@ const VisualConfiguratorContent: React.FC = () => {
             maxZoom={1.5}
             minZoom={0.5}
           >
-            <Background gap={24} color="#bbbbbb" size={2} />
+            <Background gap={24} color="#9999994d" size={2} />
             {configMode === 'edit' && selectedAgentId && selectedAgentId !== 'user' && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                <button
+                <SketchButton
+                  variant="filled"
+                  size="sm"
                   onClick={handleAddAgent}
                   disabled={characters.length >= MAX_AGENTS + 1}
-                  className={`flex items-center gap-2 px-8 py-3 bg-darkDelegation text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] shadow-lg shadow-black/5 transition-all ${characters.length >= MAX_AGENTS + 1
-                    ? 'opacity-40 cursor-not-allowed grayscale'
-                    : 'hover:bg-black hover:scale-105 active:scale-95'
-                    }`}
+                  seed="add-subagent"
                 >
                   <Plus size={16} strokeWidth={3} />
                   Add Subagent to {characters.find(a => a.id === (selectedAgentId && selectedAgentId !== 'user' ? selectedAgentId : system.leadAgent.id))?.name || 'Lead'}
-                </button>
-                <p className="text-[10px] text-zinc-400 font-bold tracking-widest">
+                </SketchButton>
+                <p className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>
                   Maximum {MAX_AGENTS} agents allowed
                 </p>
               </div>

@@ -57,17 +57,24 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
   };
 
   return (
-    <div className={`${isFloating ? 'w-full h-full max-h-[85vh] self-end rounded-2xl shadow-2xl border border-white/20' : 'w-80 h-full border-l border-zinc-100'} bg-white flex flex-col pointer-events-auto shrink-0 relative z-30 overflow-hidden transition-all duration-300`}>
+    <div
+      className={`${isFloating ? 'w-full h-full max-h-[85vh] self-end' : 'w-80 h-full border-l-[3px]'} flex flex-col pointer-events-auto shrink-0 relative z-30 overflow-hidden transition-all duration-300`}
+      style={{
+        background: 'var(--bg-base)',
+        borderColor: 'var(--stroke)',
+        ...(isFloating ? { border: '3px solid var(--stroke)', boxShadow: '6px 6px 0 0 var(--stroke)', borderRadius: 0 } : {}),
+      }}
+    >
       {!agent ? (
         !isFloating && <ProjectView />
       ) : (
         <>
           {/* Header Section */}
-          <div className={`px-4 py-3 border-b border-zinc-100 bg-white ${isFloating ? 'bg-zinc-50/50' : ''}`}>
+          <div className="px-4 py-3 border-b-[3px]" style={{ borderColor: 'var(--stroke)', background: isFloating ? 'var(--bg-surface)' : 'var(--bg-base)' }}>
             <div className="flex flex-col gap-4">
               {/* Agent Title Row */}
               <div className="flex items-center gap-4">
-                <div className="shrink-0 rounded-2xl p-0.5 bg-zinc-50 border border-zinc-100/50">
+                <div className="shrink-0 p-0.5" style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}>
                   <Avatar
                     type={agent.index === system.user.index ? 'user' : (agent.index === system.leadAgent.index ? 'lead' : 'sub')}
                     color={agent.color}
@@ -75,29 +82,31 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                   />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <h2 className="text-xl font-black text-darkDelegation leading-tight truncate">
+                  <h2 className="font-marker uppercase leading-[0.95] text-xl truncate" style={{ color: 'var(--fg-base)' }}>
                     {agent.name}
                   </h2>
                   {agent.index !== system.user.index && (
-                    <div className="flex mt-1">
+                    <div className="flex mt-1.5">
                       {agent.index === system.leadAgent.index ? (
                         <div
-                          className="text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter border shadow-sm leading-none flex items-center h-4 shrink-0"
+                          className="font-sketch uppercase tracking-[1px] text-[9px] px-1.5 py-0.5 leading-none flex items-center shrink-0"
                           style={{
                             backgroundColor: `${agent.color}15`,
                             color: agent.color,
-                            borderColor: `${agent.color}30`
+                            border: `3px solid ${agent.color}`,
+                            borderRadius: 0,
                           }}
                         >
                           Lead Agent
                         </div>
                       ) : (
                         <div
-                          className="text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter border shadow-sm leading-none flex items-center h-4 shrink-0"
+                          className="font-sketch uppercase tracking-[1px] text-[9px] px-1.5 py-0.5 leading-none flex items-center shrink-0"
                           style={{
                             backgroundColor: `${agent.color}15`,
                             color: agent.color,
-                            borderColor: `${agent.color}30`
+                            border: `3px solid ${agent.color}`,
+                            borderRadius: 0,
                           }}
                         >
                           Subagent
@@ -111,22 +120,22 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
               {/* Conditional Discussion/Chat Actions */}
               {needsInput && isChatting && (
                 <div
-                  className="border rounded-xl p-3 shadow-sm animate-in fade-in slide-in-from-top-1"
-                  style={{ backgroundColor: USER_COLOR_LIGHT, borderColor: USER_COLOR_SOFT }}
+                  className="p-3 animate-in fade-in slide-in-from-top-1"
+                  style={{ backgroundColor: USER_COLOR_LIGHT, border: `3px solid ${USER_COLOR}`, borderRadius: 0 }}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center w-4 h-4 rounded text-white shadow-sm" style={{ backgroundColor: USER_COLOR }}>
+                      <div className="flex items-center justify-center w-4 h-4 text-white" style={{ backgroundColor: USER_COLOR, borderRadius: 0 }}>
                         <MessageSquareWarning size={10} strokeWidth={3} />
                       </div>
-                      <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: USER_COLOR }}>Review Requested</span>
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[9px]" style={{ color: USER_COLOR }}>Review Requested</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Active</span>
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[9px] text-emerald-600">Active</span>
                     </div>
                   </div>
-                  <p className="text-[12px] font-bold text-darkDelegation leading-tight mt-1.5">
+                  <p className="text-[12px] font-bold leading-tight mt-1.5 font-hand" style={{ color: '#27272a' }}>
                     {isLeadAgentIdle
                       ? "Waiting to review user brief."
                       : `${agent?.name} needs input.`}
@@ -135,25 +144,28 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
               )}
 
               {needsInput && !isChatting ? (
-                <div className="flex flex-col gap-3 p-4 bg-zinc-50 border border-zinc-100 rounded-xl animate-in fade-in slide-in-from-top-1 shadow-sm">
-                  <div className="flex items-center gap-1.5 font-black uppercase tracking-widest text-[9px]">
+                <div
+                  className="flex flex-col gap-3 p-4 animate-in fade-in slide-in-from-top-1"
+                  style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', boxShadow: '4px 4px 0 0 var(--stroke)', borderRadius: 0 }}
+                >
+                  <div className="flex items-center gap-1.5 font-sketch uppercase tracking-[1.5px] text-[9px]">
                     <div
-                      className="flex items-center justify-center w-5 h-5 border rounded-lg"
-                      style={{ backgroundColor: USER_COLOR_LIGHT, borderColor: USER_COLOR_SOFT, color: USER_COLOR }}
+                      className="flex items-center justify-center w-5 h-5"
+                      style={{ backgroundColor: USER_COLOR_LIGHT, border: `3px solid ${USER_COLOR}`, color: USER_COLOR, borderRadius: 0 }}
                     >
                       <MessageSquareWarning size={12} strokeWidth={3} />
                     </div>
                     <span style={{ color: USER_COLOR }}>Review Requested</span>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-[12px] font-bold text-darkDelegation leading-tight">
+                    <p className="text-[12px] font-bold leading-tight font-hand" style={{ color: 'var(--fg-base)' }}>
                       {isLeadAgentIdle
                         ? "Review the user brief with the team."
                         : `I've finished the task "${tasksOnHold[0]?.title ?? 'Work'}". I've submitted my work for your review.`}
                     </p>
 
                     {isLeadAgentIdle && (system.outputType === 'image' || system.outputType === 'video') && (
-                      <div className="mt-1 pt-3 border-t border-zinc-200/50">
+                      <div className="mt-1 pt-3 border-t-[3px]" style={{ borderColor: 'var(--stroke)' }}>
                         <ReferenceImages />
                       </div>
                     )}
@@ -161,7 +173,8 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                     <button
                       onClick={isLeadAgentIdle ? handleStartChat : () => useUiStore.getState().setActiveAuditTaskId(tasksOnHold[0]?.id)}
                       disabled={isLeadAgentIdle ? !canChat : false}
-                      className="flex items-center justify-center gap-2 bg-darkDelegation hover:bg-black active:scale-95 disabled:opacity-50 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm mt-1"
+                      className="flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40 px-4 py-3 font-sketch uppercase tracking-[1.5px] text-[10px] transition-all mt-1"
+                      style={{ background: 'var(--fg-base)', color: 'var(--bg-base)', border: '3px solid var(--stroke)', boxShadow: '4px 4px 0 0 var(--stroke)', borderRadius: 0 }}
                     >
                       {isLeadAgentIdle ? (
                         <>
@@ -183,14 +196,18 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                   {agent.index === system.user.index ? (
                     null // No chat button for the local player
                   ) : isProjectReady ? (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex flex-col gap-3 shadow-sm">
+                    <div
+                      className="bg-yellow-50 p-4 flex flex-col gap-3"
+                      style={{ border: '3px solid #ca8a04', boxShadow: '4px 4px 0 0 #ca8a04', borderRadius: 0 }}
+                    >
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-yellow-700">Project Ready</span>
+                        <span className="font-sketch uppercase tracking-[1.5px] text-[10px] text-yellow-700">Project Ready</span>
                       </div>
                       <button
                         onClick={() => setFinalOutputOpen(true)}
-                        className="flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full shadow-sm"
+                        className="flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black px-4 py-2.5 font-sketch uppercase tracking-[1.5px] text-[10px] transition-all w-full"
+                        style={{ border: '3px solid #ca8a04', boxShadow: '4px 4px 0 0 #ca8a04', borderRadius: 0 }}
                       >
                         <FolderOpen size={14} strokeWidth={3} />
                         View Final Output
@@ -203,19 +220,30 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                       onClick={handleStartChat}
                       disabled={!canChat}
                       title={!canChat ? reason : undefined}
-                      className={`w-full h-10 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest ${canChat
-                          ? 'bg-darkDelegation text-white border-none shadow-md'
-                          : 'bg-zinc-50 text-zinc-300 border border-transparent cursor-not-allowed'
-                        }`}
+                      className="w-full h-10 px-4 flex items-center justify-center gap-2 transition-all active:scale-95 font-sketch uppercase tracking-[1.5px] text-[10px]"
+                      style={canChat ? {
+                        background: 'var(--fg-base)',
+                        color: 'var(--bg-base)',
+                        border: '3px solid var(--stroke)',
+                        boxShadow: '4px 4px 0 0 var(--stroke)',
+                        borderRadius: 0,
+                      } : {
+                        background: 'var(--bg-surface)',
+                        color: 'var(--fg-base)',
+                        opacity: 0.5,
+                        border: '3px solid var(--stroke)',
+                        borderRadius: 0,
+                        cursor: 'not-allowed',
+                      }}
                     >
                       {canChat ? (
                         <>
-                          <MessageSquare size={13} className="text-white" />
+                          <MessageSquare size={13} />
                           Open Chat
                         </>
                       ) : (
                         <>
-                          <Lock size={12} className="opacity-40" />
+                          <Lock size={12} className="opacity-60" />
                           {reason}
                         </>
                       )}
@@ -226,19 +254,20 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
             </div>
           </div>
 
-          <div className={`flex-1 overflow-y-auto relative min-h-0 ${isFloating ? 'bg-white' : 'bg-zinc-50/30'}`}>
+          <div className="flex-1 overflow-y-auto relative min-h-0" style={{ background: isFloating ? 'var(--bg-base)' : 'var(--bg-surface)' }}>
             {isChatting ? (
-              <div className="flex flex-col h-full bg-white">
+              <div className="flex flex-col h-full" style={{ background: 'var(--bg-base)' }}>
                 <div className="flex-1 overflow-y-auto">
                   <ChatPanel />
                 </div>
                 {/* Close Chat button at the bottom when chatting */}
-                <div className="p-3 bg-white border-t border-zinc-100 shrink-0">
+                <div className="p-3 border-t-[3px] shrink-0" style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}>
                   <button
                     onClick={handleEndChat}
-                    className="w-full h-10 px-4 bg-darkDelegation hover:bg-black text-white rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest shadow-md"
+                    className="w-full h-10 px-4 flex items-center justify-center gap-2 transition-all active:scale-95 font-sketch uppercase tracking-[1.5px] text-[10px]"
+                    style={{ background: 'var(--fg-base)', color: 'var(--bg-base)', border: '3px solid var(--stroke)', boxShadow: '4px 4px 0 0 var(--stroke)', borderRadius: 0 }}
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--bg-base)' }} />
                     Close Chat
                   </button>
                 </div>

@@ -8,6 +8,7 @@ import { Avatar } from '../components/Avatar';
 import { ColorPicker } from './ColorPicker';
 import { InfoBubble } from '../components/InfoBubble';
 import { getBrightness, MAX_BRIGHTNESS } from './colorUtils';
+import { SketchButton } from '../sketch';
 
 interface AgentConfigPanelProps {
   agent: AgentNode;
@@ -100,8 +101,8 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
   const renderField = (label: string, icon: React.ReactNode, value: React.ReactNode, helpText?: string, inline?: boolean) => (
     <div className={inline ? "flex items-center justify-between" : "space-y-1.5"}>
       <div className="flex items-center gap-1.5">
-        {icon && <div className="text-zinc-400 shrink-0">{icon}</div>}
-        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">{label}</label>
+        {icon && <div className="shrink-0" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>{icon}</div>}
+        <label className="font-sketch uppercase tracking-[1.5px] text-[12px] block" style={{ color: 'var(--fg-base)', opacity: 0.7 }}>{label}</label>
         {helpText && <InfoBubble text={helpText} />}
       </div>
       <div className={inline ? "" : "px-1"}>{value}</div>
@@ -109,39 +110,36 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
   );
 
   return (
-    <div className="w-80 h-full bg-white border-l border-zinc-100 flex flex-col pointer-events-auto overflow-hidden animate-in slide-in-from-right-full duration-300">
+    <div className="w-80 h-full border-l-[3px] flex flex-col pointer-events-auto overflow-hidden animate-in slide-in-from-right-full duration-300" style={{ background: 'var(--bg-base)', borderColor: 'var(--stroke)' }}>
       {/* Header */}
-      <div className="px-4 py-2.5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+      <div className="px-4 py-2.5 flex items-center justify-between border-b-[3px]" style={{ background: 'var(--bg-surface)', borderColor: 'var(--stroke)' }}>
         <div className="flex items-center gap-2">
           {isUser ? (
             <Avatar type="user" color={USER_COLOR} size={32} />
           ) : (
             <Avatar type={isLead ? 'lead' : 'sub'} color={editData.color} size={32} />
           )}
-          <h3 className="font-bold text-sm text-darkDelegation uppercase tracking-tight truncate">
+          <h3 className="font-marker uppercase text-base leading-[0.95] truncate" style={{ color: 'var(--fg-base)' }}>
             {isUser ? 'User Info' : (isLead ? 'Lead Agent Info' : 'Subagent Info')}
           </h3>
         </div>
-        <button onClick={() => onClose(false)} className="p-1 hover:bg-zinc-200 rounded-md transition-colors text-zinc-400">
-          <X size={18} />
+        <button onClick={() => onClose(false)} className="p-1 transition-opacity opacity-60 hover:opacity-100" style={{ color: 'var(--fg-base)' }}>
+          <X size={18} strokeWidth={2.5} />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-8">
         {isUser ? (
           <div
-            className="flex flex-col items-center justify-center p-8 text-center space-y-4 rounded-3xl border italic"
-            style={{ backgroundColor: USER_COLOR_LIGHT, borderColor: USER_COLOR_SOFT }}
+            className="flex flex-col items-center justify-center p-8 text-center space-y-4"
+            style={{ backgroundColor: USER_COLOR_LIGHT, border: `3px solid ${USER_COLOR}`, boxShadow: `4px 4px 0 0 ${USER_COLOR}`, borderRadius: 0 }}
           >
-            <div
-              className="p-1 rounded-2xl text-white shadow-lg"
-              style={{ backgroundColor: 'transparent', boxShadow: `0 10px 15px -3px ${USER_COLOR}33` }}
-            >
+            <div className="p-1">
               <Avatar type="user" color={USER_COLOR} size={64} />
             </div>
             <div>
-              <h4 className="text-sm font-black text-darkDelegation uppercase tracking-widest mb-1">Primary User</h4>
-              <p className="text-[11px] text-zinc-500 font-medium leading-relaxed">This is you. Your identity and role are fixed across all teams for consistency.</p>
+              <h4 className="font-marker uppercase text-base leading-[0.95] mb-1" style={{ color: 'var(--fg-base)' }}>Primary User</h4>
+              <p className="font-hand text-sm leading-relaxed" style={{ color: 'var(--fg-base)', opacity: 0.7 }}>This is you. Your identity and role are fixed across all teams for consistency.</p>
             </div>
           </div>
         ) : (
@@ -151,8 +149,8 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
               {!isView && (
                 <div className="space-y-1.5 px-1">
                   <div className="flex items-center gap-1.5">
-                    <Pipette size={12} className="text-zinc-400" />
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Agent Color</label>
+                    <Pipette size={12} style={{ color: 'var(--fg-base)', opacity: 0.6 }} />
+                    <label className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)', opacity: 0.7 }}>Agent Color</label>
                   </div>
                   <ColorPicker
                     color={editData.color}
@@ -162,18 +160,18 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
               )}
 
               {renderField('Name', <CircleUser size={12} />, isView ? (
-                <p className="text-sm font-bold text-darkDelegation">{editData.name}</p>
+                <p className="font-hand text-base" style={{ color: 'var(--fg-base)' }}>{editData.name}</p>
               ) : (
                 <div className="space-y-1">
                   <input
                     type="text"
                     value={editData.name}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className={`w-full px-3 py-2 bg-zinc-50 border rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-black/5 ${nameCollision ? 'border-red-500 text-red-600' : 'border-zinc-200'
-                      }`}
+                    className="w-full px-3 py-2 font-hand text-sm focus:outline-none"
+                    style={{ background: 'var(--bg-base)', color: nameCollision ? '#dc2626' : 'var(--fg-base)', border: nameCollision ? '3px solid #ef4444' : '3px solid var(--stroke)', borderRadius: 0 }}
                   />
                   {nameCollision && (
-                    <p className="text-[9px] text-red-500 font-bold uppercase tracking-tight px-1">
+                    <p className="font-sketch text-red-500 uppercase tracking-[1.5px] text-[12px] px-1">
                       This name is already used in the team
                     </p>
                   )}
@@ -181,14 +179,15 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
               ), 'Limit characters to letters, numbers and spaces. The ID is auto-generated.')}
 
               {renderField('LLM Model', <Cpu size={12} />, isView ? (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 border border-zinc-200 rounded-lg text-xs font-mono text-zinc-600 w-fit lowercase">
+                <div className="flex items-center gap-2 px-3 py-1.5 text-xs font-mono w-fit lowercase" style={{ background: 'var(--bg-surface)', color: 'var(--fg-base)', opacity: 0.85, border: '3px solid var(--stroke)', borderRadius: 0 }}>
                   {editData.model || 'gemini-3-flash-preview'}
                 </div>
               ) : (
                 <select
                   value={editData.model || 'gemini-3-flash-preview'}
                   onChange={(e) => updateDraft({ model: e.target.value })}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-black/5 cursor-pointer lowercase"
+                  className="w-full px-3 py-2 text-xs font-mono focus:outline-none cursor-pointer lowercase"
+                  style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                 >
                   {availableModels.map(m => <option key={m} value={m} className="lowercase">{m}</option>)}
                 </select>
@@ -198,8 +197,8 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
             {/* Content Group */}
             <div className="space-y-6">
               {renderField('Description', <Target size={12} />, isView ? (
-                <div className="bg-zinc-50/50 p-4 rounded-xl border border-zinc-100/50 min-h-[120px]">
-                  <p className="text-xs text-zinc-600 leading-relaxed whitespace-pre-wrap font-medium italic">
+                <div className="p-4 min-h-[120px]" style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}>
+                  <p className="font-hand text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--fg-base)', opacity: 0.8 }}>
                     {editData.description || "No description provided."}
                   </p>
                 </div>
@@ -207,7 +206,8 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                 <textarea
                   value={editData.description}
                   onChange={(e) => updateDraft({ description: e.target.value })}
-                  className="w-full h-48 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-black/5 resize-none font-medium text-zinc-600"
+                  className="w-full h-48 px-3 py-2 font-hand text-sm leading-relaxed focus:outline-none resize-none"
+                  style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   placeholder="What is this agent specialized in? What are its primary goals and constraints?"
                 />
               ), 'A concise yet comprehensive definition of the agent\'s role, expertise, and operational guidelines.')}
@@ -217,41 +217,41 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
             {/* Capabilities & Controls */}
             <div className="space-y-6">
               {renderField('Capabilities', <Zap size={12} />, (
-                <div className="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 gap-y-3 flex flex-col">
+                <div className="p-4 gap-y-3 flex flex-col" style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}>
                   {isLead && (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
-                        <Check size={10} className="text-zinc-700" />
+                      <div className="w-4 h-4 flex items-center justify-center shrink-0" style={{ background: 'var(--fg-base)', borderRadius: 0 }}>
+                        <Check size={10} style={{ color: 'var(--bg-base)' }} strokeWidth={3} />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Set Project Brief</span>
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Set Project Brief</span>
                     </div>
                   )}
                   {(editData.subagents?.length || 0) > 0 && (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
-                        <Check size={10} className="text-zinc-700" />
+                      <div className="w-4 h-4 flex items-center justify-center shrink-0" style={{ background: 'var(--fg-base)', borderRadius: 0 }}>
+                        <Check size={10} style={{ color: 'var(--bg-base)' }} strokeWidth={3} />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Propose Tasks</span>
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Propose Tasks</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
-                      <Check size={10} className="text-zinc-700" />
+                    <div className="w-4 h-4 flex items-center justify-center shrink-0" style={{ background: 'var(--fg-base)', borderRadius: 0 }}>
+                      <Check size={10} style={{ color: 'var(--bg-base)' }} strokeWidth={3} />
                     </div>
-                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Execute & Complete Tasks</span>
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Execute & Complete Tasks</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
-                      <Check size={10} className="text-zinc-700" />
+                    <div className="w-4 h-4 flex items-center justify-center shrink-0" style={{ background: 'var(--fg-base)', borderRadius: 0 }}>
+                      <Check size={10} style={{ color: 'var(--bg-base)' }} strokeWidth={3} />
                     </div>
-                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Autonomous Reasoning</span>
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Autonomous Reasoning</span>
                   </div>
                   {isLead && (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
-                        <Check size={10} className="text-zinc-700" />
+                      <div className="w-4 h-4 flex items-center justify-center shrink-0" style={{ background: 'var(--fg-base)', borderRadius: 0 }}>
+                        <Check size={10} style={{ color: 'var(--bg-base)' }} strokeWidth={3} />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Deliver Project</span>
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Deliver Project</span>
                     </div>
                   )}
                 </div>
@@ -261,38 +261,36 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                 <div
                   onClick={() => !isView && updateDraft({ humanInTheLoop: !editData.humanInTheLoop })}
                   className={`
-                      group flex items-center justify-between p-4 rounded-2xl border transition-all duration-200
-                      ${editData.humanInTheLoop
-                      ? 'shadow-sm'
-                      : 'bg-zinc-50 border-zinc-100 hover:border-zinc-200'}
+                      group flex items-center justify-between p-4 transition-all duration-200
                       ${isView ? 'pointer-events-none' : 'cursor-pointer active:scale-[0.98]'}
                     `}
                   style={{
-                    backgroundColor: editData.humanInTheLoop ? USER_COLOR_LIGHT : undefined,
-                    borderColor: editData.humanInTheLoop ? USER_COLOR_SOFT : undefined
+                    backgroundColor: editData.humanInTheLoop ? USER_COLOR_LIGHT : 'var(--bg-surface)',
+                    border: editData.humanInTheLoop ? `3px solid ${USER_COLOR}` : '3px solid var(--stroke)',
+                    boxShadow: editData.humanInTheLoop ? `4px 4px 0 0 ${USER_COLOR}` : '4px 4px 0 0 var(--stroke)',
+                    borderRadius: 0
                   }}
                 >
                   <div className="flex flex-col gap-0.5">
                     <span
-                      className={`text-[10px] font-black uppercase tracking-tight ${editData.humanInTheLoop ? '' : 'text-zinc-700'}`}
-                      style={{ color: editData.humanInTheLoop ? USER_COLOR : undefined }}
+                      className="font-sketch uppercase tracking-[1.5px] text-[12px]"
+                      style={{ color: editData.humanInTheLoop ? USER_COLOR : 'var(--fg-base)' }}
                     >
                       Human-in-the-loop
                     </span>
-                    <span className="text-[9px] text-zinc-500 font-medium leading-tight max-w-[160px]">
+                    <span className="font-hand text-xs leading-tight max-w-[160px]" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>
                       Agent must request your validation before completing any task.
                     </span>
                   </div>
-                  <div className={`
-                      w-8 h-4 rounded-full relative transition-colors duration-200
-                      ${editData.humanInTheLoop ? '' : 'bg-zinc-300'}
-                    `}
-                    style={{ backgroundColor: editData.humanInTheLoop ? USER_COLOR : undefined }}
+                  <div className="w-8 h-4 relative transition-colors duration-200"
+                    style={{ backgroundColor: editData.humanInTheLoop ? USER_COLOR : 'var(--bg-base)', border: '2px solid var(--stroke)', borderRadius: 0 }}
                   >
                     <div className={`
-                        absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform duration-200 shadow-sm
-                        ${editData.humanInTheLoop ? 'translate-x-4.5' : 'translate-x-0.5'}
-                      `} />
+                        absolute top-0 w-3 h-3 transition-transform duration-200
+                        ${editData.humanInTheLoop ? 'translate-x-4' : 'translate-x-0'}
+                      `}
+                      style={{ background: 'var(--fg-base)', borderRadius: 0 }}
+                    />
                   </div>
                 </div>
               ), "When enabled, the agent will pause their work to submit the result for your review and feedback before finalizing.")}
@@ -303,19 +301,22 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
 
       {/* Footer Actions */}
       {!isView && !isUser && (
-        <div className="p-4 border-t border-zinc-100 bg-zinc-50/30 flex flex-col gap-2">
-          <button
+        <div className="p-4 border-t-[3px] flex flex-col gap-2" style={{ background: 'var(--bg-surface)', borderColor: 'var(--stroke)' }}>
+          <SketchButton
+            variant="filled"
+            size="md"
             onClick={handleSave}
             disabled={!isValid}
-            className={`w-full py-3 bg-darkDelegation hover:bg-black text-white rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-black/5 active:scale-95 ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+            seed="update-agent"
+            className="w-full"
           >
             <Save size={16} strokeWidth={2.5} />
             Update Agent
-          </button>
+          </SketchButton>
           {onRemove && (
             <button
               onClick={onRemove}
-              className="w-full py-2.5 text-red-500 hover:bg-red-50 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+              className="w-full py-2.5 text-red-500 font-sketch uppercase tracking-[1.5px] text-[12px] flex items-center justify-center gap-2 transition-opacity hover:opacity-80"
             >
               <Trash2 size={14} />
               Remove from Team

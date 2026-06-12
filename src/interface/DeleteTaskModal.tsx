@@ -1,5 +1,6 @@
 import { Trash2, X } from 'lucide-react';
 import React from 'react';
+import { SketchButton, SketchCard } from './sketch';
 
 interface DeleteTaskModalProps {
   isOpen: boolean;
@@ -15,50 +16,67 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ isOpen, onClose, onCo
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"
+        className="absolute inset-0 animate-in fade-in duration-300"
+        style={{ background: 'color-mix(in srgb, var(--bg-base) 75%, transparent)' }}
       />
-      <div
-        className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden border border-zinc-100"
+      <SketchCard
+        variant="paper"
+        seed="delete-task-modal"
+        className="relative w-full max-w-sm p-5 animate-in fade-in slide-in-from-bottom-4 duration-300"
       >
-        <div className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-500">
-              <Trash2 size={20} />
-            </div>
-            <button
-              onClick={onClose}
-              className="p-1.5 hover:bg-zinc-100 rounded-full text-zinc-400 transition-colors"
-            >
-              <X size={18} />
-            </button>
+        <div className="flex items-center justify-between mb-4">
+          <div
+            className="w-10 h-10 flex items-center justify-center text-red-500 shrink-0"
+            style={{ border: '3px solid #ef4444', borderRadius: 0 }}
+          >
+            <Trash2 size={20} strokeWidth={2.5} />
           </div>
-
-          <h3 className="text-lg font-bold text-darkDelegation mb-1.5 leading-tight">
-            Delete Task?
-          </h3>
-          <p className="text-[13px] text-zinc-500 leading-relaxed mb-6">
-            Are you sure you want to delete {taskTitle ? <span className="font-semibold text-zinc-700">"{taskTitle}"</span> : "this task"}? This action cannot be undone.
-          </p>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="flex-1 py-2 text-sm font-bold text-zinc-500 hover:bg-zinc-50 rounded-xl transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-              className="flex-1 py-2 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors shadow-sm shadow-red-200"
-            >
-              Delete Task
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 transition-opacity opacity-60 hover:opacity-100 active:scale-95"
+            style={{ color: 'var(--fg-base)' }}
+          >
+            <X size={18} strokeWidth={2.5} />
+          </button>
         </div>
-      </div>
+
+        <h3
+          className="font-marker uppercase text-xl mb-1.5 leading-[0.95]"
+          style={{ color: 'var(--fg-base)' }}
+        >
+          Delete Task?
+        </h3>
+        <p
+          className="font-hand text-base leading-relaxed mb-6"
+          style={{ color: 'var(--fg-base)', opacity: 0.8 }}
+        >
+          Are you sure you want to delete {taskTitle ? <span className="font-semibold" style={{ opacity: 1 }}>"{taskTitle}"</span> : "this task"}? This action cannot be undone.
+        </p>
+
+        <div className="flex items-center gap-2">
+          <SketchButton
+            variant="default"
+            size="md"
+            seed="delete-cancel"
+            className="flex-1"
+            onClick={onClose}
+          >
+            Cancel
+          </SketchButton>
+          <SketchButton
+            variant="filled"
+            size="md"
+            seed="delete-confirm"
+            className="flex-1"
+            onClick={() => {
+              onConfirm();
+              onClose();
+            }}
+          >
+            Delete Task
+          </SketchButton>
+        </div>
+      </SketchCard>
     </div>
   );
 };

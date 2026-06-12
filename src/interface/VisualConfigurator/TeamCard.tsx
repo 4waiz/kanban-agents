@@ -9,6 +9,7 @@ import { getBrightness, getDarkenedColor } from './colorUtils';
 import { ColorPicker } from './ColorPicker';
 import { InfoBubble } from '../components/InfoBubble';
 import { TeamOutputBadge } from '../components/TeamOutputBadge';
+import { SketchButton } from '../sketch';
 
 interface TeamCardProps {
   system: AgenticSystem;
@@ -141,33 +142,33 @@ export const TeamCard: React.FC<TeamCardProps> = ({
   return (
     <div
       onClick={() => onSelectTeam(system.id)}
-      className={`group relative p-3.5 rounded-2xl transition-all cursor-pointer border-[3px] ${isSelected ? 'bg-zinc-50/50 shadow-sm' : 'bg-white hover:border-zinc-200/50'
-        }`}
+      className="group relative p-3.5 transition-all cursor-pointer"
       style={{
-        borderColor: isSelected
-          ? system.color
-          : (isActive ? `${system.color}50` : 'transparent')
+        background: isSelected ? 'var(--bg-surface)' : 'var(--bg-base)',
+        borderRadius: 0,
+        border: `3px solid ${isSelected ? system.color : (isActive ? `${system.color}80` : 'var(--stroke)')}`,
+        boxShadow: isSelected ? `4px 4px 0 0 ${system.color}` : '4px 4px 0 0 var(--stroke)'
       }}
     >
       {isEditing && (
         <div className="mb-3">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-100">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b-[3px]" style={{ borderColor: 'var(--stroke)' }}>
             <div className="flex items-center gap-2">
-              <h3 className="text-[9px] font-black uppercase tracking-[0.1em] text-darkDelegation">Edit Team</h3>
+              <h3 className="font-marker uppercase text-base leading-[0.95]" style={{ color: 'var(--fg-base)' }}>Edit Team</h3>
             </div>
-            <button onClick={handleCloseEdit} className="p-1 hover:bg-zinc-200 rounded-lg text-zinc-400">
+            <button onClick={handleCloseEdit} className="p-1 transition-opacity opacity-60 hover:opacity-100" style={{ color: 'var(--fg-base)' }}>
               <X size={14} strokeWidth={3} />
             </button>
           </div>
           {errorMsg && (
-            <div className="flex items-center justify-between gap-2 p-2 bg-red-50 border border-red-100 rounded-xl mb-2">
-              <p className="text-[9px] font-bold text-red-600 leading-tight uppercase tracking-tight">
+            <div className="flex items-center justify-between gap-2 p-2 bg-red-50 mb-2" style={{ border: '3px solid #ef4444', borderRadius: 0 }}>
+              <p className="font-sketch text-red-600 leading-tight uppercase tracking-[1.5px] text-[12px]">
                 {errorMsg}
               </p>
               {showDeleteConfirm && (
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(false); setErrorMsg(null); }} className="px-2 py-0.5 bg-white border border-red-100 text-red-400 rounded-md text-[8px] font-black uppercase tracking-wider">Cancel</button>
-                  <button onClick={confirmDelete} className="px-2 py-0.5 bg-red-500 text-white rounded-md text-[8px] font-black uppercase tracking-wider">OK</button>
+                  <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(false); setErrorMsg(null); }} className="px-2 py-0.5 bg-white text-red-400 font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ border: '2px solid #ef4444', borderRadius: 0 }}>Cancel</button>
+                  <button onClick={confirmDelete} className="px-2 py-0.5 bg-red-500 text-white font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ border: '2px solid #ef4444', borderRadius: 0 }}>OK</button>
                 </div>
               )}
             </div>
@@ -178,7 +179,8 @@ export const TeamCard: React.FC<TeamCardProps> = ({
       {isSelected && !isEditing && (
         <button
           onClick={(e) => { e.stopPropagation(); onModeChange('edit'); }}
-          className="absolute top-3.5 right-3.5 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 rounded-xl text-darkDelegation text-[9px] font-black uppercase tracking-widest transition-all opacity-0 group-hover:opacity-100 z-10"
+          className="absolute top-3.5 right-3.5 flex items-center gap-1.5 px-3 py-1.5 font-sketch uppercase tracking-[1.5px] text-[12px] transition-all opacity-0 group-hover:opacity-100 z-10"
+          style={{ background: 'var(--bg-surface)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', boxShadow: '3px 3px 0 0 var(--stroke)', borderRadius: 0 }}
         >
           <Edit2 size={12} strokeWidth={2.5} />
           Edit Team
@@ -191,11 +193,11 @@ export const TeamCard: React.FC<TeamCardProps> = ({
           {!isEditing && (
             <div className="relative shrink-0">
               <div
-                className="h-9 px-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-black/5"
-                style={{ backgroundColor: system.color }}
+                className="h-9 px-3 flex items-center justify-center gap-2"
+                style={{ backgroundColor: system.color, border: '3px solid var(--stroke)', boxShadow: '3px 3px 0 0 var(--stroke)', borderRadius: 0 }}
               >
                 <Users size={14} className="text-white opacity-90" strokeWidth={3} />
-                <span className="text-xs font-black text-white leading-none">
+                <span className="text-xs font-marker text-white leading-none">
                   {agentCount}
                 </span>
               </div>
@@ -205,7 +207,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
           <div className="flex-1 min-w-0 flex flex-col">
             {isEditing ? (
               <div className="space-y-1 mb-2">
-                <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Team Color</label>
+                <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Team Color</label>
                 <div className="px-1">
                   <ColorPicker
                     color={localEditData.color || '#A855F7'}
@@ -215,8 +217,8 @@ export const TeamCard: React.FC<TeamCardProps> = ({
               </div>
             ) : (
               <div className="space-y-0.5">
-                <h4 className={`text-[11px] font-black leading-tight uppercase tracking-wider truncate mb-0.5 ${system.teamName ? 'text-darkDelegation' : 'text-zinc-300'}`}>{system.teamName || 'Untitled Team'}</h4>
-                <p className={`text-[9px] font-bold uppercase tracking-[0.1em] ${system.teamType ? 'text-zinc-400' : 'text-zinc-200'}`}>{system.teamType || 'Unspecified Type'}</p>
+                <h4 className="font-marker text-base leading-[0.95] uppercase truncate mb-0.5" style={{ color: 'var(--fg-base)', opacity: system.teamName ? 1 : 0.35 }}>{system.teamName || 'Untitled Team'}</h4>
+                <p className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)', opacity: system.teamType ? 0.6 : 0.3 }}>{system.teamType || 'Unspecified Type'}</p>
               </div>
             )}
           </div>
@@ -227,39 +229,41 @@ export const TeamCard: React.FC<TeamCardProps> = ({
           {isEditing ? (
             <div className="space-y-2 mb-3" onClick={(e) => e.stopPropagation()}>
               <div className="space-y-1">
-                <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Team Name</label>
+                <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Team Name</label>
                 <input
                   value={localEditData.teamName || ''}
                   onChange={(e) => { setLocalEditData(prev => ({ ...prev, teamName: e.target.value })); setErrorMsg(null); }}
-                  className="w-full bg-white border border-zinc-100 text-[13px] font-medium rounded-xl px-2.5 py-1.5 outline-none transition-colors"
-                  style={{ '--tw-focus-border-color': USER_COLOR } as React.CSSProperties}
+                  className="w-full font-hand text-sm px-2.5 py-1.5 outline-none transition-colors"
+                  style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   onFocus={(e) => e.target.style.borderColor = USER_COLOR}
-                  onBlur={(e) => e.target.style.borderColor = '#f4f4f5'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--stroke)'}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Team Type</label>
+                <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Team Type</label>
                 <input
                   value={localEditData.teamType || ''}
                   onChange={(e) => { setLocalEditData(prev => ({ ...prev, teamType: e.target.value })); setErrorMsg(null); }}
-                  className="w-full bg-white border border-zinc-100 text-[13px] font-medium rounded-xl px-2.5 py-1.5 outline-none transition-colors"
+                  className="w-full font-hand text-sm px-2.5 py-1.5 outline-none transition-colors"
+                  style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   onFocus={(e) => e.target.style.borderColor = USER_COLOR}
-                  onBlur={(e) => e.target.style.borderColor = '#f4f4f5'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--stroke)'}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Description</label>
+                <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Description</label>
                 <textarea
                   value={localEditData.teamDescription || ''}
                   onChange={(e) => { setLocalEditData(prev => ({ ...prev, teamDescription: e.target.value })); setErrorMsg(null); }}
-                  className="w-full bg-white border border-zinc-100 text-[13px] font-medium rounded-xl p-2.5 outline-none resize-none h-20 leading-snug transition-colors"
+                  className="w-full font-hand text-sm p-2.5 outline-none resize-none h-20 leading-snug transition-colors"
+                  style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   onFocus={(e) => e.target.style.borderColor = USER_COLOR}
-                  onBlur={(e) => e.target.style.borderColor = '#f4f4f5'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--stroke)'}
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Output Type</label>
+                  <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Output Type</label>
                   <select
                     value={localEditData.outputType || 'text'}
                     onChange={(e) => {
@@ -271,7 +275,8 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                         outputAutoApprove: newType === 'text'
                       }));
                     }}
-                    className="w-full bg-white border border-zinc-100 text-[11px] font-bold rounded-xl px-2.5 py-1.5 outline-none cursor-pointer"
+                    className="w-full font-hand text-xs px-2.5 py-1.5 outline-none cursor-pointer"
+                    style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   >
                     <option value="text">TEXT</option>
                     <option value="image">IMAGE</option>
@@ -280,11 +285,12 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[7px] font-black uppercase text-zinc-400 ml-1">Output Model</label>
+                  <label className="font-sketch uppercase tracking-[1.5px] text-[12px] ml-1" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>Output Model</label>
                   <select
                     value={localEditData.outputModel || DEFAULT_MODELS.text}
                     onChange={(e) => setLocalEditData(prev => ({ ...prev, outputModel: e.target.value }))}
-                    className="w-full bg-white border border-zinc-100 text-[10px] font-bold rounded-xl px-2.5 py-1.5 outline-none cursor-pointer lowercase"
+                    className="w-full font-mono text-[10px] px-2.5 py-1.5 outline-none cursor-pointer lowercase"
+                    style={{ background: 'var(--bg-base)', color: 'var(--fg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
                   >
                     {(AVAILABLE_MODELS[localEditData.outputType as ModelType] || []).map(model => (
                       <option key={model} value={model}>{model}</option>
@@ -293,47 +299,48 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 bg-zinc-50 border border-zinc-100/50 rounded-xl mt-0.5">
+              <div className="flex items-center justify-between p-2.5 mt-0.5" style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1">
-                    <span className="text-[8px] font-black uppercase text-darkDelegation tracking-wider">Auto-Approve Output</span>
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ color: 'var(--fg-base)' }}>Auto-Approve Output</span>
                     <InfoBubble text="When enabled, the team will generate the final asset immediately after finishing all tasks without waiting for your review." />
                   </div>
-                  <span className="text-[7px] text-zinc-400 font-bold leading-tight">Generate asset without review</span>
+                  <span className="font-hand text-xs leading-tight" style={{ color: 'var(--fg-base)', opacity: 0.55 }}>Generate asset without review</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setLocalEditData(prev => ({ ...prev, outputAutoApprove: !prev.outputAutoApprove }))}
-                  className={`w-8 h-4 rounded-full transition-all relative ${localEditData.outputAutoApprove !== false ? 'bg-darkDelegation shadow-[0_0_8px_rgba(0,0,0,0.15)]' : 'bg-zinc-200'}`}
+                  className="w-8 h-4 transition-all relative"
+                  style={{ background: localEditData.outputAutoApprove !== false ? 'var(--fg-base)' : 'var(--bg-base)', border: '2px solid var(--stroke)', borderRadius: 0 }}
                 >
-                  <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${localEditData.outputAutoApprove !== false ? 'left-[16px]' : 'left-[4px]'}`} />
+                  <div className={`absolute top-0 w-3 h-3 transition-all ${localEditData.outputAutoApprove !== false ? 'left-[15px]' : 'left-0'}`} style={{ background: localEditData.outputAutoApprove !== false ? 'var(--bg-base)' : 'var(--fg-base)', borderRadius: 0 }} />
                 </button>
               </div>
 
-              <button onClick={handleSave} disabled={!isFormValid} className={`w-full py-2.5 mt-1 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] transition-all shadow-lg ${isFormValid ? 'bg-darkDelegation text-white shadow-black/10' : 'bg-zinc-50 text-zinc-300 shadow-none cursor-not-allowed'}`}>Save Changes</button>
+              <SketchButton onClick={handleSave} disabled={!isFormValid} variant="filled" size="md" seed="save-changes" className="w-full mt-1">Save Changes</SketchButton>
             </div>
           ) : (
             <div className="space-y-0.5 mb-2.5 px-2">
               <TeamOutputBadge system={system} className="mt-1" />
 
-              <p className={`text-[10px] leading-relaxed font-medium mt-2 line-clamp-2 ${system.teamDescription ? 'text-zinc-500/80' : 'text-zinc-300 italic'}`}>{system.teamDescription || 'No description provided.'}</p>
+              <p className="font-hand text-sm leading-relaxed mt-2 line-clamp-2" style={{ color: 'var(--fg-base)', opacity: system.teamDescription ? 0.7 : 0.4 }}>{system.teamDescription || 'No description provided.'}</p>
             </div>
           )}
 
-          <div className={`flex items-center justify-between mt-auto pt-2 ${isEditing ? 'border-t border-zinc-100/30' : ''}`}>
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-50 text-[8px] font-black text-zinc-400 rounded-lg">
+          <div className={`flex items-center justify-between mt-auto pt-2 ${isEditing ? 'border-t-[3px]' : ''}`} style={isEditing ? { borderColor: 'var(--stroke)' } : undefined}>
+            <div className="flex items-center gap-1.5 px-2 py-1 font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ background: 'var(--bg-surface)', color: 'var(--fg-base)', opacity: 0.7, border: '2px solid var(--stroke)', borderRadius: 0 }}>
               <Users size={10} strokeWidth={3} />
               {agentCount} {agentCount === 1 ? 'AGENT' : 'AGENTS'}
             </div>
             <div className="flex items-center gap-2">
               {isActive && !isEditing && (
-                <div className="px-2 py-0.5 rounded-full text-white text-[7px] font-black uppercase tracking-[0.15em]" style={{ backgroundColor: system.color }}>Active</div>
+                <div className="px-2 py-0.5 text-white font-sketch uppercase tracking-[1.5px] text-[12px]" style={{ backgroundColor: system.color, border: '2px solid var(--stroke)', borderRadius: 0 }}>Active</div>
               )}
               {isSelected && !isActive && !isEditing && (
-                <button onClick={handleSwitch} className="px-3 py-1.5 bg-darkDelegation text-white rounded-full text-[9px] font-black uppercase tracking-wider shadow-md">Switch</button>
+                <SketchButton onClick={(e) => handleSwitch(e as any)} variant="filled" size="sm" seed="switch-team">Switch</SketchButton>
               )}
               {isEditing && (
-                <button onClick={handleDelete} className="flex items-center gap-1.5 px-2 py-1 text-red-500 hover:bg-red-50 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all">
+                <button onClick={handleDelete} className="flex items-center gap-1.5 px-2 py-1 text-red-500 font-sketch uppercase tracking-[1.5px] text-[12px] transition-opacity hover:opacity-80">
                   <Trash2 size={12} />
                   Delete Team
                 </button>

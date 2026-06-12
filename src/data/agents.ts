@@ -38,8 +38,8 @@ export interface AgenticSystem {
 
 export const AGENTIC_SETS: AgenticSystem[] = [
   {
-    id: 'unboring-net',
-    teamName: 'unboring.net',
+    id: 'awaiz-ahmed',
+    teamName: 'Awaiz Ahmed',
     teamType: 'Agency',
     teamDescription: 'A full-service creative agency covering branding, design, development and go-to-market strategy.',
     color: '#4285F4',

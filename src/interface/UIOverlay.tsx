@@ -38,8 +38,14 @@ const AlertBubble: React.FC<AlertBubbleProps> = ({ icon, position, visible, colo
       }}
     >
       <div
-        className={`bg-darkDelegation/90 backdrop-blur-md p-1.5 rounded-full border border-white/10 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform ${onClick ? 'hover:border-white/30' : ''}`}
-        style={{ color }}
+        className="p-1.5 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+        style={{
+          color,
+          background: 'var(--fg-base)',
+          border: '3px solid var(--stroke)',
+          boxShadow: '4px 4px 0 0 var(--stroke)',
+          borderRadius: 0,
+        }}
       >
         {icon}
       </div>
@@ -173,7 +179,15 @@ const UIOverlay: React.FC = () => {
                 transform: 'translate(-50%, -100%) translateY(-10px)'
               }}
             >
-              <div className="bg-darkDelegation/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 shadow-xl flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200">
+              <div
+                className="px-3 py-1.5 flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200"
+                style={{
+                  background: 'var(--fg-base)',
+                  border: '3px solid var(--stroke)',
+                  boxShadow: '4px 4px 0 0 var(--stroke)',
+                  borderRadius: 0,
+                }}
+              >
                 <div
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: selectedAgent.color }}
@@ -181,19 +195,19 @@ const UIOverlay: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   {selectedAgent.index === system.user.index ? (
 
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">{selectedAgent.name} (You)</span>
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--bg-base)' }}>{selectedAgent.name} (You)</span>
                   ) : isLeadAgentProjectReady ? (
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${label.className}`}>
+                    <span className={`font-sketch uppercase tracking-[1.5px] text-[10px] ${label.className}`}>
                       {label.text}
                     </span>
                   ) : (
                     <>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--bg-base)' }}>
                         {selectedAgent.name}
                       </span>
                       {label.text && (
                         <>
-                          <span className="text-[10px] font-medium uppercase tracking-widest text-white/40">·</span>
+                          <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'var(--bg-base)', opacity: 0.4 }}>·</span>
                           <span className={`text-[10px] font-bold uppercase tracking-widest ${label.className}`}>
                             {label.text}
                           </span>
@@ -221,7 +235,15 @@ const UIOverlay: React.FC = () => {
                 transform: 'translate(-50%, -100%) translateY(-10px)'
               }}
             >
-              <div className="bg-darkDelegation/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 shadow-xl flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200">
+              <div
+                className="px-3 py-1.5 flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200"
+                style={{
+                  background: 'var(--fg-base)',
+                  border: '3px solid var(--stroke)',
+                  boxShadow: '4px 4px 0 0 var(--stroke)',
+                  borderRadius: 0,
+                }}
+              >
                 <div
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: hoveredAgent.color }}
@@ -229,19 +251,19 @@ const UIOverlay: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   {hoveredAgent.index === system.user.index ? (
 
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">{hoveredAgent.name} (You)</span>
+                    <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--bg-base)' }}>{hoveredAgent.name} (You)</span>
                   ) : isLeadAgentProjectReady ? (
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${label.className}`}>
+                    <span className={`font-sketch uppercase tracking-[1.5px] text-[10px] ${label.className}`}>
                       {label.text}
                     </span>
                   ) : (
                     <>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--bg-base)' }}>
                         {hoveredAgent.name}
                       </span>
                       {label.text && (
                         <>
-                          <span className="text-[10px] font-medium uppercase tracking-widest text-white/40">·</span>
+                          <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'var(--bg-base)', opacity: 0.4 }}>·</span>
                           <span className={`text-[10px] font-bold uppercase tracking-widest ${label.className}`}>
                             {label.text}
                           </span>
@@ -268,8 +290,16 @@ const UIOverlay: React.FC = () => {
             transform: 'translate(-50%, -100%) translateY(-10px)'
           }}
         >
-          <div className="bg-darkDelegation/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 shadow-xl flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200">
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">{hoveredPoiLabel}</span>
+          <div
+            className="px-3 py-1.5 flex items-center gap-2 whitespace-nowrap animate-in fade-in zoom-in-95 duration-200"
+            style={{
+              background: 'var(--fg-base)',
+              border: '3px solid var(--stroke)',
+              boxShadow: '4px 4px 0 0 var(--stroke)',
+              borderRadius: 0,
+            }}
+          >
+            <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--bg-base)' }}>{hoveredPoiLabel}</span>
           </div>
         </div>
       )}

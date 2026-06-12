@@ -103,7 +103,7 @@ const ChatPanel: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white relative overflow-hidden shrink-0 pointer-events-auto">
+    <div className="flex flex-col h-full relative overflow-hidden shrink-0 pointer-events-auto" style={{ background: 'var(--bg-base)' }}>
       {/* Messages */}
       <div
         ref={scrollRef}
@@ -126,16 +126,19 @@ const ChatPanel: React.FC = () => {
 
               <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <div
-                  className={`px-4 py-2.5 rounded-[20px] text-[14px] leading-relaxed shadow-sm border ${msg.role === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'
-                    }`}
+                  className="px-4 py-2.5 text-[14px] leading-relaxed font-hand"
                   style={msg.role === 'user' ? {
                     backgroundColor: USER_COLOR_LIGHT,
-                    borderColor: USER_COLOR_SOFT,
-                    color: '#27272a' // text-darkDelegation
+                    border: `3px solid ${USER_COLOR}`,
+                    color: '#27272a',
+                    boxShadow: `4px 4px 0 0 ${USER_COLOR}`,
+                    borderRadius: 0,
                   } : {
-                    backgroundColor: '#fafafa', // bg-zinc-50
-                    borderColor: '#f4f4f5', // border-zinc-100
-                    color: '#27272a' // text-darkDelegation
+                    background: 'var(--bg-surface)',
+                    border: '3px solid var(--stroke)',
+                    color: 'var(--fg-base)',
+                    boxShadow: '4px 4px 0 0 var(--stroke)',
+                    borderRadius: 0,
                   }}
                 >
                   {msg.role === 'assistant' ? (
@@ -145,15 +148,18 @@ const ChatPanel: React.FC = () => {
                       </ReactMarkdown>
 
                       {msg.metadata?.reviewTaskId && (
-                        <div className="mt-4 p-4 bg-white/50 rounded-2xl border border-zinc-200/50 flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <div
+                          className="mt-4 p-4 flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                          style={{ background: 'var(--bg-base)', border: '3px solid var(--stroke)', borderRadius: 0 }}
+                        >
                           <div className="flex items-center gap-2 pr-2">
                             <div
-                              className="p-2 rounded-xl flex-shrink-0"
-                              style={{ backgroundColor: USER_COLOR_LIGHT, color: USER_COLOR }}
+                              className="p-2 shrink-0"
+                              style={{ backgroundColor: USER_COLOR_LIGHT, color: USER_COLOR, border: `3px solid ${USER_COLOR}`, borderRadius: 0 }}
                             >
                               <FileSearch size={18} />
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
+                            <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--fg-base)', opacity: 0.75 }}>
                               {coreStore.tasks.find(t => t.id === msg.metadata.reviewTaskId)?.status === 'on_hold'
                                 ? 'Review Requested'
                                 : 'Review Processed'}
@@ -163,7 +169,8 @@ const ChatPanel: React.FC = () => {
                           {coreStore.tasks.find(t => t.id === msg.metadata.reviewTaskId)?.status === 'on_hold' && (
                             <button
                               onClick={() => setActiveAuditTaskId(msg.metadata.reviewTaskId)}
-                              className="flex-1 min-w-[120px] px-4 py-2 bg-darkDelegation text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all shadow-sm whitespace-nowrap"
+                              className="flex-1 min-w-[120px] px-4 py-2 font-sketch uppercase tracking-[1.5px] text-[10px] active:scale-95 transition-all whitespace-nowrap"
+                              style={{ background: 'var(--fg-base)', color: 'var(--bg-base)', border: '3px solid var(--stroke)', boxShadow: '4px 4px 0 0 var(--stroke)', borderRadius: 0 }}
                             >
                               Review Task
                             </button>
@@ -177,7 +184,7 @@ const ChatPanel: React.FC = () => {
                 </div>
 
                 <div className={`flex items-center gap-2 mt-2 px-1`}>
-                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                  <span className="font-sketch uppercase tracking-[1.5px] text-[10px]" style={{ color: 'var(--fg-base)', opacity: 0.6 }}>
                     {msg.role === 'user' ? 'You' : (agent?.name?.split(' ')[0] || 'AI')}
                   </span>
                 </div>
@@ -190,16 +197,16 @@ const ChatPanel: React.FC = () => {
           <div
             className="flex items-start gap-3"
           >
-            <div className="w-4 h-4 text-zinc-300 animate-pulse mt-1">
+            <div className="w-4 h-4 animate-pulse mt-1" style={{ color: 'var(--fg-base)', opacity: 0.4 }}>
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2L14.85 9.15L22 12L14.85 14.85L12 22L9.15 14.85L2 12L9.15 9.15L12 2Z" />
               </svg>
             </div>
-            <div className="bg-zinc-50 px-4 py-3 rounded-2xl rounded-tl-none">
+            <div className="px-4 py-3" style={{ background: 'var(--bg-surface)', border: '3px solid var(--stroke)', borderRadius: 0 }}>
               <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ animationDelay: '0ms', background: 'var(--fg-base)', opacity: 0.4 }} />
+                <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ animationDelay: '150ms', background: 'var(--fg-base)', opacity: 0.4 }} />
+                <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ animationDelay: '300ms', background: 'var(--fg-base)', opacity: 0.4 }} />
               </div>
             </div>
           </div>
@@ -207,7 +214,7 @@ const ChatPanel: React.FC = () => {
       </div>
 
       {/* Input */}
-      <div className="p-2 border-t border-zinc-50">
+      <div className="p-2 border-t-[3px]" style={{ borderColor: 'var(--stroke)' }}>
         <div className="relative flex items-center gap-2">
           <div className="flex-1 relative">
             <textarea
@@ -233,26 +240,33 @@ const ChatPanel: React.FC = () => {
                 }
               }}
               placeholder="Message (↵ to send)"
-              className="w-full bg-white border border-zinc-200 rounded-2xl px-3 py-3 text-sm focus:outline-none focus:ring-2 transition-all resize-none pr-12 [scrollbar-width:none]"
+              className="w-full px-3 py-3 text-sm font-hand focus:outline-none transition-all resize-none pr-12 [scrollbar-width:none]"
               style={{
-                borderColor: input.trim() ? USER_COLOR : undefined,
-                boxShadow: input.trim() ? `0 0 0 2px ${USER_COLOR_LIGHT}` : undefined
+                background: 'var(--bg-surface)',
+                color: 'var(--fg-base)',
+                border: input.trim() ? `3px solid ${USER_COLOR}` : '3px solid var(--stroke)',
+                borderRadius: 0,
               }}
             />
           </div>
           <button
             onClick={handleSend}
             disabled={!input.trim() || isThinking}
-            style={{ backgroundColor: !input.trim() || isThinking ? undefined : agent.color }}
-            className={`h-11 w-11 shrink-0 rounded-2xl flex items-center justify-center font-black text-xs uppercase tracking-widest transition-all active:scale-95 ${!input.trim() || isThinking
-              ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-              : 'text-white shadow-lg hover:brightness-90'
+            style={{
+              backgroundColor: !input.trim() || isThinking ? 'var(--bg-surface)' : agent.color,
+              color: !input.trim() || isThinking ? 'var(--fg-base)' : '#fff',
+              border: '3px solid var(--stroke)',
+              boxShadow: '4px 4px 0 0 var(--stroke)',
+              borderRadius: 0,
+              opacity: !input.trim() || isThinking ? 0.5 : 1,
+            }}
+            className={`h-11 w-11 shrink-0 flex items-center justify-center font-black text-xs uppercase tracking-widest transition-all active:scale-95 ${!input.trim() || isThinking ? 'cursor-not-allowed' : 'hover:brightness-90'
               }`}
           >
             <Send size={16} strokeWidth={3} />
           </button>
         </div>
-        <p className="text-[8px] text-zinc-400 mt-2 text-center font-medium uppercase tracking-wider">
+        <p className="font-sketch uppercase tracking-[1.5px] text-[8px] mt-2 text-center" style={{ color: 'var(--fg-base)', opacity: 0.5 }}>
           Shift + ↵ for new line
         </p>
       </div>
