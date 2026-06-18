@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {
   atan,
   attribute, cos, float, Fn, If, instanceIndex, mat3,
-  mat4, positionLocal, sin, storage, texture, uint, uniform, uv, vec3,
+  mat4, mix, positionLocal, sin, smoothstep, storage, texture, uint, uniform, uv, varying, vec3,
   vec4
 } from 'three/tsl';
 import * as THREE from 'three/webgpu';
@@ -25,6 +25,8 @@ export class CharacterManager {
   private velAttribute: THREE.StorageInstancedBufferAttribute | null = null;
   private colorAttribute: THREE.InstancedBufferAttribute | null = null;
   private accessoryAttribute: THREE.InstancedBufferAttribute | null = null;
+  /** Per-instance human skin RGB for the head. */
+  private skinAttribute: THREE.InstancedBufferAttribute | null = null;
   private positionStorage: any;
   private velocityStorage: any;
 
@@ -57,6 +59,10 @@ export class CharacterManager {
 
   // Uniforms
   private uSpeed = uniform(0.015);
+  /** Chibi head growth factor (1 = original, ~1.5 = cute big head). */
+  private uHeadScale = uniform(1.3);
+  /** Bind-pose model-space position of the head joint (chibi pivot). */
+  private uHeadPivotBind = uniform(vec3(0, 1.4, 0));
 
   public isLoaded = false;
 
@@ -102,6 +108,13 @@ export class CharacterManager {
         this.numBones = firstSkinnedMesh.skeleton.bones.length;
         const headBone = firstSkinnedMesh.skeleton.bones.find(b => b.name.toLowerCase() === 'head');
         this.headBoneIndex = headBone ? firstSkinnedMesh.skeleton.bones.indexOf(headBone) : -1;
+        if (headBone) {
+          // Bind-pose model-space position of the head joint — used as the pivot
+          // for the chibi head enlargement in the vertex shader.
+          model.updateMatrixWorld(true);
+          const p = new THREE.Vector3().setFromMatrixPosition(headBone.matrixWorld);
+          this.uHeadPivotBind.value.set(p.x, p.y, p.z);
+        }
       }
 
       const animations = gltf.animations;
@@ -209,6 +222,12 @@ export class CharacterManager {
     const velArray = new Float32Array(this.instanceCount * 4);
     const colorArray = new Float32Array(this.instanceCount * 3);
     const accessoryArray = new Float32Array(this.instanceCount);
+    // Human skin tone (RGB) per instance for the head.
+    const skinArray = new Float32Array(this.instanceCount * 3);
+    const SKIN_TONES = [
+      [1.00, 0.86, 0.74], [0.98, 0.80, 0.65], [0.91, 0.71, 0.55],
+      [0.80, 0.59, 0.43], [0.62, 0.43, 0.30], [0.45, 0.30, 0.21],
+    ];
 
     const tempColor = new THREE.Color();
     const spawnRadius = 8; // Default spawn area
@@ -261,6 +280,12 @@ export class CharacterManager {
       } else {
         accessoryArray[i] = 2;
       }
+
+      // Deterministic human skin tone for the head (stable across reloads).
+      const tone = SKIN_TONES[(i * 7 + 3) % SKIN_TONES.length];
+      skinArray[i * 3 + 0] = tone[0];
+      skinArray[i * 3 + 1] = tone[1];
+      skinArray[i * 3 + 2] = tone[2];
     }
 
 
@@ -270,6 +295,7 @@ export class CharacterManager {
     this.velAttribute = new THREE.StorageInstancedBufferAttribute(velArray, 4);
     this.colorAttribute = new THREE.InstancedBufferAttribute(colorArray, 3);
     this.accessoryAttribute = new THREE.InstancedBufferAttribute(accessoryArray, 1);
+    this.skinAttribute = new THREE.InstancedBufferAttribute(skinArray, 3);
 
     this.positionStorage = storage(this.posAttribute, 'vec4', this.instanceCount);
     this.velocityStorage = storage(this.velAttribute, 'vec4', this.instanceCount);
@@ -360,10 +386,12 @@ export class CharacterManager {
       // Solo dejamos el atributo que NO se calcula en el Compute Shader
       instancedGeometry.setAttribute('instanceColor', this.colorAttribute);
       if (this.accessoryAttribute) instancedGeometry.setAttribute('accessoryType', this.accessoryAttribute);
+      if (this.skinAttribute) instancedGeometry.setAttribute('skinColor', this.skinAttribute);
 
       const material = new THREE.MeshStandardNodeMaterial();
+      // Soft, matte "toy" look: fully rough, no metallic sheen reads cuter.
       material.roughness = 1;
-      material.metalness = 0.25;
+      material.metalness = 0.0;
 
       const instanceColor = attribute('instanceColor', 'vec3');
       const map = (baseMaterial as any).map;
@@ -372,6 +400,9 @@ export class CharacterManager {
       const animParams = this.agentStateBuffer!.storageNode.element(instanceIndex.mul(2).add(1));
       const instanceAlpha = animParams.z;
       const accessoryType = attribute('accessoryType', 'float');
+      const skinColor = attribute('skinColor', 'vec3');
+      // Head weight written by the vertex node, interpolated for the fragment.
+      const bodyHeadWeight = varying(float(0));
 
       const isEyes = name.toLowerCase().includes('eyes');
       const isMouth = name.toLowerCase().includes('mouth');
@@ -405,6 +436,29 @@ export class CharacterManager {
         if (map) {
           const texColor = texture(map);
           material.colorNode = vec4(texColor.rgb.mul(instanceColor), baseAlpha);
+        } else if (isBody) {
+          // ── Painted-on outfit: pants (low) / shirt (mid) / head (top) ──
+          // The head is identified by HEAD-BONE WEIGHT; the rest of the body is
+          // split into trousers and shirt by relative height. Each agent keeps
+          // its identity colour.
+          const y = positionLocal.y;
+          const tint = instanceColor;          // agent identity colour
+
+          // Head mask from the vertex stage (exact per-vertex head weight).
+          const isHead = smoothstep(float(0.4), float(0.7), bodyHeadWeight);
+
+          // Darker trousers (instance colour ×0.55) for the lower body.
+          const pants = tint.mul(0.55);
+          // Brighter shirt (instance colour lifted toward white) for the torso.
+          const shirt = tint.mul(0.85).add(vec3(0.15, 0.15, 0.15));
+          // Head uses a human skin tone.
+          const head = skinColor;
+
+          // Within the (non-head) body, trousers low → shirt higher.
+          const toShirt = smoothstep(float(0.18), float(0.40), y);
+          const lower = mix(pants, shirt, toShirt);
+          const outfit = mix(lower, head, isHead);
+          material.colorNode = vec4(outfit, baseAlpha);
         } else {
           material.colorNode = vec4(instanceColor, baseAlpha);
         }
@@ -435,7 +489,7 @@ export class CharacterManager {
       }
 
       const isVisible = isHeadphones ? accessoryType.equal(float(1)) : (isCap ? accessoryType.equal(float(2)) : float(1));
-      const vertexNode = this.createVertexNode(isVisible.and(instanceAlpha.greaterThan(0)));
+      const vertexNode = this.createVertexNode(isVisible.and(instanceAlpha.greaterThan(0)), bodyHeadWeight);
       material.positionNode = vertexNode;
       (material as any).castShadowPositionNode = vertexNode;
 
@@ -450,7 +504,7 @@ export class CharacterManager {
     }
   }
 
-  private createVertexNode(isVisibleNode: any) {
+  private createVertexNode(isVisibleNode: any, headWeightVarying?: any) {
     return Fn(() => {
       const instancePos = this.positionStorage.element(instanceIndex).xyz;
       const rawVel = this.velocityStorage.element(instanceIndex).xyz;
@@ -516,6 +570,38 @@ export class CharacterManager {
         addInfluence(skinIndex.w, skinWeight.w);
 
         finalPosition.assign(skinMat.mul(vec4(positionLocal, 1.0)).xyz);
+
+        // ── Chibi head enlargement ──────────────────────────────
+        // Grow vertices driven by the head bone outward from the head's
+        // animated pivot, so the silhouette reads "cute big head" while the
+        // head stays attached at the neck (body weights are unaffected).
+        if (this.headBoneIndex !== -1) {
+          const headIdx = uint(this.headBoneIndex);
+          const headWeight = float(0).toVar();
+          const accHead = (boneIdxNode: any, weightNode: any) => {
+            If(boneIdxNode.toUint().equal(headIdx), () => {
+              headWeight.addAssign(weightNode);
+            });
+          };
+          accHead(skinIndex.x, skinWeight.x);
+          accHead(skinIndex.y, skinWeight.y);
+          accHead(skinIndex.z, skinWeight.z);
+          accHead(skinIndex.w, skinWeight.w);
+
+          // Expose the (exact, per-vertex) head weight to the fragment stage so
+          // the body material can paint the head as skin and the rest as clothes.
+          if (headWeightVarying) headWeightVarying.assign(headWeight.clamp(0, 1));
+
+          // Head bone's animated pivot = its skin matrix applied to the bind-pose
+          // head-joint position (matches how the body verts are skinned).
+          const headAddr = animOffset.add(safeFrame.mul(uint(this.numBones))).add(headIdx);
+          const headMat = animBuffer.element(headAddr);
+          const headPivot = headMat.mul(vec4(this.uHeadPivotBind, 1.0)).xyz;
+
+          // 1 + (HEAD_SCALE-1)*weight → smooth blend from body (×1) to head (×HEAD_SCALE).
+          const grow = float(1).add(this.uHeadScale.sub(1).mul(headWeight.clamp(0, 1)));
+          finalPosition.assign(headPivot.add(finalPosition.sub(headPivot).mul(grow)));
+        }
       }
 
       const vertexScale = isVisibleNode.select(float(1), float(0));
